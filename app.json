@@ -1,0 +1,7 @@
+{
+  "name": "myhoa-server",
+  "description": "This is a repo for Technopolis graduate project 2021 \"Мой Двор\" (server-side application)",
+  "repository": "https://gitlab.com/my-courtyard/myhoa-server",
+  "image": "heroku/java",
+  "addons": [ "heroku-postgresql", "papertail" ]
+}

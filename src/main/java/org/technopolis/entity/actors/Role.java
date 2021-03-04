@@ -3,12 +3,11 @@ package org.technopolis.entity.actors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.technopolis.configuration.Constants;
 import org.technopolis.entity.AbstractEntity;
 
 import javax.persistence.*;
 
-@Entity
+/*@Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,4 +18,4 @@ public class Role extends AbstractEntity {
     @Column(length = 20)
     private Constants.Roles name;
 
-}
+}*/

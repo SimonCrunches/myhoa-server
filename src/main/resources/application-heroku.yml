@@ -1,13 +1,11 @@
 server:
-  port: 5050
+  port: ${PORT:5000}
 
 spring:
   datasource:
-    initialization-mode: always
     driver-class-name: org.postgresql.Driver
-    url: ${JDBC_DATABASE_URL}
-    username: ${JDBC_DATABASE_USERNAME}
-    password: ${JDBC_DATABASE_PASSWORD}
+    url: ${DATABASE_URL}
+
     tomcat:
       test-on-borrow: true
       test-while-idle: true

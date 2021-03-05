@@ -1,4 +1,4 @@
-package org.technopolis.security.role;
+package org.technopolis.configuration.security;
 
 import javax.annotation.Nonnull;
 

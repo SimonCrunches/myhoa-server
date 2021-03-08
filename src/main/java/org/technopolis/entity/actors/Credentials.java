@@ -8,7 +8,6 @@ import org.technopolis.entity.AbstractEntity;
 import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,16 +19,13 @@ import java.util.Set;
 public final class Credentials extends AbstractEntity {
 
     @Column(unique = true, name = "login", nullable = false)
-    @NotBlank(message = "Login is mandatory")
     private String login;
 
     @Column(name = "password", nullable = false)
-    @NotBlank(message = "Password is mandatory")
     private String password;
 
     @Column(unique = true, name = "email", nullable = false)
     @Email
-    @NotBlank(message = "Email is mandatory")
     private String email;
 
     @ManyToMany(fetch = FetchType.LAZY)

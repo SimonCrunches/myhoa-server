@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class Role extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
+    @Column(nullable = false)
     private RoleConstants name;
 
 }

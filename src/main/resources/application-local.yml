@@ -20,6 +20,11 @@ spring:
       max-wait: 8000
 
   jpa:
+    database: postgresql
     hibernate:
       ddl-auto: create-drop
     open-in-view: off
+    properties:
+      hibernate:
+       dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
+

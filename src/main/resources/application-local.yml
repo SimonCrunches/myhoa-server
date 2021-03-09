@@ -21,10 +21,8 @@ spring:
 
   jpa:
     database: postgresql
+    database-platform: org.hibernate.spatial.dialect.postgis.PostgisDialect
     hibernate:
       ddl-auto: create-drop
     open-in-view: off
-    properties:
-      hibernate:
-       dialect: org.hibernate.spatial.dialect.postgis.PostgisDialect
 

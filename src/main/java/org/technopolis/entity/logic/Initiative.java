@@ -5,9 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.locationtech.jts.geom.Point;
 import org.technopolis.entity.AbstractEntity;
-import org.technopolis.entity.actors.Role;
 import org.technopolis.entity.actors.User;
 
 import javax.persistence.*;
@@ -29,8 +27,11 @@ public class Initiative extends AbstractEntity {
     @Column(name = "descrioption", nullable = false)
     private String description;
 
-    @Column(name = "location", nullable = false)
-    private Point location;
+    @Column(name = "latitude", nullable = false)
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = false)
+    private Double longitude;
 
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)

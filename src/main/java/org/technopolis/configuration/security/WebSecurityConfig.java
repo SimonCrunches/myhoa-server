@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.technopolis.configuration.security.jwt.AuthEntryPointJwt;
 import org.technopolis.configuration.security.jwt.AuthTokenFilter;
 import org.technopolis.configuration.security.service.UserDetailsServiceImpl;
@@ -57,9 +58,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/api/auth/**").permitAll()
-                .anyRequest().permitAll().and()
-                .formLogin().and()
+                .authorizeRequests()
+                    .antMatchers("/api/v1.0/expert/**").hasRole("EXPERT")
+                    .antMatchers("/api/v1.0/user/**").hasRole("USER")
+                    .anyRequest().permitAll().and()
+                .formLogin()
+                    .loginPage("/api/v1.0/login")
+                    .defaultSuccessUrl("/api/v1.0/home")
+                    .permitAll()
+                    .and()
+                .logout()
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/api/v1.0/logout"))
+                    .invalidateHttpSession(true)
+                    .and()
                 .httpBasic();
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

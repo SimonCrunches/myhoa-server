@@ -16,8 +16,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@MappedSuperclass
-public abstract class User extends AbstractEntity {
+public class User extends AbstractEntity {
 
     @Column(name = "first_name", nullable = false)
     protected String firstName;
@@ -29,8 +28,8 @@ public abstract class User extends AbstractEntity {
     @JoinColumn(name = "credentials_id")
     protected Credentials credentials;
 
-    /*@JsonBackReference
+    @JsonBackReference
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    protected Set<Initiative> createdInitiatives = new HashSet<>();*/
+    protected Set<Initiative> createdInitiatives = new HashSet<>();
 
 }

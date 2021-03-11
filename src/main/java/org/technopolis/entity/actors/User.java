@@ -24,9 +24,8 @@ public class User extends AbstractEntity {
     @Column(name = "last_name", nullable = false)
     protected String lastName;
 
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "credentials_id")
-    protected Credentials credentials;
+    @Column(name = "token", nullable = false)
+    protected String token;
 
     @JsonBackReference
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)

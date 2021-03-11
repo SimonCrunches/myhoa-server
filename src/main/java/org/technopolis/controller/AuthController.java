@@ -8,12 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import org.technopolis.configuration.security.RoleConstants;
+import org.technopolis.configuration.security.model.RoleConstants;
 import org.technopolis.configuration.security.jwt.JwtUtils;
 import org.technopolis.configuration.security.service.UserDetailsImpl;
-import org.technopolis.data.actor.CredentialsRepository;
 import org.technopolis.data.actor.RoleRepository;
-import org.technopolis.entity.actors.Credentials;
 import org.technopolis.entity.actors.Role;
 import org.technopolis.payload.request.SignInRequest;
 import org.technopolis.payload.request.SignUpRequest;
@@ -33,18 +31,15 @@ import java.util.stream.Collectors;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final CredentialsRepository credentialsRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
 
     public AuthController(@Nonnull final AuthenticationManager authenticationManager,
-                          @Nonnull final CredentialsRepository credentialsRepository,
                           @Nonnull final RoleRepository roleRepository,
                           @Nonnull final PasswordEncoder encoder,
                           @Nonnull final JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
-        this.credentialsRepository = credentialsRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.jwtUtils = jwtUtils;
@@ -53,7 +48,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest signInRequest) {
 
-        final Authentication authentication = authenticationManager.authenticate(
+        /*final Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInRequest.getLogin(), signInRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -68,12 +63,12 @@ public class AuthController {
                 userDetails.getId(),
                 userDetails.getUsername(),
                 userDetails.getEmail(),
-                roles));
+                roles));*/
     }
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        if (credentialsRepository.existsCredentialsByLogin(signUpRequest.getUsername())) {
+        /*if (credentialsRepository.existsCredentialsByLogin(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
@@ -120,7 +115,7 @@ public class AuthController {
         }
 
         credentials.setRoles(roles);
-        credentialsRepository.save(credentials);
+        credentialsRepository.save(credentials);*/
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

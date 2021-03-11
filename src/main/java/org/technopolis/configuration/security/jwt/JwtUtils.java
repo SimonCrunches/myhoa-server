@@ -2,28 +2,34 @@ package org.technopolis.configuration.security.jwt;
 
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.technopolis.configuration.security.SecurityConstants;
-import org.technopolis.configuration.security.service.UserDetailsImpl;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.WebUtils;
+import org.technopolis.configuration.security.model.SecurityConstants;
+import org.technopolis.configuration.security.model.UserDTO;
 
 import javax.annotation.Nonnull;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+
+import static org.technopolis.configuration.security.model.SecurityConstants.HEADER_STRING;
+import static org.technopolis.configuration.security.model.SecurityConstants.TOKEN_PREFIX;
 
 @Component
 @Slf4j
 public class JwtUtils {
 
-    public String generateJwtToken(@Nonnull final Authentication authentication) {
-        final UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
-
-        return Jwts.builder().setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())
+    public String generateJwtToken(@Nonnull final UserDTO user) {
+        return Jwts.builder().setSubject((user.getName())).setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(@Nonnull final String token) {
+    public String getLoginFromJwtToken(@Nonnull final String token) {
         return Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -44,5 +50,29 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public UserDTO getUserDTO() {
+        UserDTO userPrincipal = null;
+        final SecurityContext securityContext = SecurityContextHolder.getContext();
+        final Object principal = securityContext.getAuthentication().getPrincipal();
+        if (principal instanceof UserDTO) {
+            userPrincipal = ((UserDTO) principal);
+        }
+        return userPrincipal;
+    }
+
+    public String getTokenFromRequest(@Nonnull final HttpServletRequest request) {
+        String token = null;
+        final Cookie cookieToken = WebUtils.getCookie(request, "token");
+        if (cookieToken != null) {
+            token = cookieToken.getValue();
+        } else {
+            final String bearerToken = request.getHeader(HEADER_STRING);
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
+                token = bearerToken.substring(7);
+            }
+        }
+        return token;
     }
 }

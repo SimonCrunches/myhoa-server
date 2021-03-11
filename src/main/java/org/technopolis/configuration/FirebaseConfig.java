@@ -3,6 +3,8 @@ package org.technopolis.configuration;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -24,6 +26,16 @@ public class FirebaseConfig {
             FirebaseApp.initializeApp(options);
         }
         return FirebaseApp.getInstance();
+    }
+
+    @Bean
+    public FirebaseAuth getAuth() throws IOException {
+        return FirebaseAuth.getInstance(getFirebaseApp());
+    }
+
+    @Bean
+    public FirebaseRemoteConfig getRemoteConfig() throws IOException {
+        return FirebaseRemoteConfig.getInstance(getFirebaseApp());
     }
 
 }

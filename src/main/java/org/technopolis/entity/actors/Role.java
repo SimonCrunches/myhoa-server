@@ -3,7 +3,7 @@ package org.technopolis.entity.actors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.technopolis.configuration.security.RoleConstants;
+import org.technopolis.configuration.security.model.RoleConstants;
 import org.technopolis.entity.AbstractEntity;
 
 import javax.persistence.*;

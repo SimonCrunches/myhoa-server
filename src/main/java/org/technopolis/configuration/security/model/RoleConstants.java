@@ -1,12 +1,10 @@
-package org.technopolis.configuration.security;
+package org.technopolis.configuration.security.model;
 
 import javax.annotation.Nonnull;
 
 public enum RoleConstants {
-    ROLE_GUEST("ROLE_GUEST"),
     ROLE_ACTIVE_USER("ROLE_ACTIVE_USER"),
-    ROLE_EXPERT("ROLE_EXPERT"),
-    ROLE_SUPER("ROLE_SUPER");
+    ROLE_EXPERT("ROLE_EXPERT");
 
     private final String role;
 

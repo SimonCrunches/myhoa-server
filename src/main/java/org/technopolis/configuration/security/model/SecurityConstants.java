@@ -1,4 +1,4 @@
-package org.technopolis.configuration.security;
+package org.technopolis.configuration.security.model;
 
 public final class SecurityConstants {
     public static final String SECRET = "myhoa-key";

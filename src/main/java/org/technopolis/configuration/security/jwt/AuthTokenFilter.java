@@ -1,15 +1,17 @@
 package org.technopolis.configuration.security.jwt;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.technopolis.configuration.security.SecurityConstants;
-import org.technopolis.configuration.security.service.UserDetailsServiceImpl;
+import org.technopolis.configuration.security.model.UserDTO;
 
 import javax.annotation.Nonnull;
 import javax.servlet.FilterChain;
@@ -17,6 +19,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class AuthTokenFilter extends OncePerRequestFilter {
@@ -24,35 +28,41 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtils jwtUtils;
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void doFilterInternal(@Nonnull final HttpServletRequest request,
                                     @Nonnull final HttpServletResponse response,
                                     @Nonnull final FilterChain filterChain) throws ServletException, IOException {
-        try {
-            final String jwt = parseJwt(request);
-            if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                final String username = jwtUtils.getUserNameFromJwtToken(jwt);
-
-                final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                final UsernamePasswordAuthenticationToken authentication =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
-        } catch (Exception e) {
-            log.error("Cannot set user authentication", e);
-        }
+        authorize(request);
         filterChain.doFilter(request, response);
     }
 
-    private String parseJwt(@Nonnull final HttpServletRequest request) {
-        final String headerAuth = request.getHeader(SecurityConstants.HEADER_STRING);
-        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(SecurityConstants.TOKEN_PREFIX)) {
-            return headerAuth.substring(7);
+    private void authorize(@Nonnull final HttpServletRequest request) {
+        final String idToken = jwtUtils.getTokenFromRequest(request);
+        FirebaseToken decodedToken = null;
+        try {
+            decodedToken = firebaseAuth.verifyIdToken(idToken);
+        } catch (FirebaseAuthException e) {
+            log.error("Firebase Exception {}", e.getLocalizedMessage());
         }
-        return null;
+        if (decodedToken != null) {
+            final UserDTO user = firebaseTokenToUserDto(decodedToken);
+            final List<GrantedAuthority> authorities = new ArrayList<>();
+            decodedToken.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));
+            final UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    user, decodedToken, authorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+    }
+
+    private UserDTO firebaseTokenToUserDto(@Nonnull final FirebaseToken decodedToken) {
+        return UserDTO.builder()
+                .uid(decodedToken.getUid())
+                .name(decodedToken.getName())
+                .email(decodedToken.getEmail())
+                .isEmailVerified(decodedToken.isEmailVerified())
+                .build();
     }
 }

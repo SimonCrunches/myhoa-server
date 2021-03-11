@@ -2,7 +2,6 @@ package org.technopolis.data.actor;
 
 import org.springframework.stereotype.Repository;
 import org.technopolis.data.BaseRepository;
-import org.technopolis.entity.actors.Credentials;
 import org.technopolis.entity.actors.User;
 
 import javax.annotation.Nonnull;

@@ -14,5 +14,7 @@ public interface UserRepository extends BaseRepository<User> {
 
     Optional<User> findByLastName(@Nonnull final String lastName);
 
-    Optional<User> findByToken(@Nonnull final String token);
+    Optional<User> findByFirebaseToken(@Nonnull final String firebaseToken);
+
+    Optional<User> findByJwtToken(@Nonnull final String jwtToken);
 }

@@ -21,7 +21,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(@Nonnull final String username) {
-        final User user = userRepository.findByToken(username)
+        final User user = userRepository.findByFirebaseToken(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
         try {
             return new UserDetailsImpl(user);

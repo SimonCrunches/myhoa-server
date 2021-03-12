@@ -40,7 +40,7 @@ public class UserDetailsImpl implements UserDetails {
 
     public UserDetailsImpl(@Nonnull final User user) throws ExecutionException, InterruptedException {
 
-        final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(user.getToken()).get();
+        final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(user.getFirebaseToken()).get();
         final List<GrantedAuthority> authorities = new ArrayList<>();
         decodedToken.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));
 

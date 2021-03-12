@@ -54,7 +54,7 @@ public class AuthController {
     public ResponseEntity<?> authenticate(@RequestHeader(value = SecurityConstants.HEADER_FIREBASE) String idToken) throws Exception {
         final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(idToken).get();
 
-        final Optional<User> existedUser = userRepository.findByToken(decodedToken.getUid());
+        final Optional<User> existedUser = userRepository.findByFirebaseToken(decodedToken.getUid());
         if (existedUser.isPresent()) {
             return ResponseEntity.ok(new MessageResponse("User already exists",
                     existedUser.get().getJwtToken()));

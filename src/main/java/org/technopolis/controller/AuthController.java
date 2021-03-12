@@ -1,29 +1,30 @@
 package org.technopolis.controller;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseToken;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import org.technopolis.configuration.security.model.RoleConstants;
+import org.technopolis.configuration.security.SecurityService;
 import org.technopolis.configuration.security.jwt.JwtUtils;
-import org.technopolis.configuration.security.service.UserDetailsImpl;
-import org.technopolis.data.actor.RoleRepository;
-import org.technopolis.entity.actors.Role;
-import org.technopolis.payload.request.SignInRequest;
+import org.technopolis.configuration.security.model.UserDTO;
+import org.technopolis.data.actor.UserRepository;
+import org.technopolis.entity.actors.User;
 import org.technopolis.payload.request.SignUpRequest;
 import org.technopolis.payload.response.JwtResponse;
 import org.technopolis.payload.response.MessageResponse;
 
 import javax.annotation.Nonnull;
 import javax.validation.Valid;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
+
+import static org.technopolis.configuration.security.model.SecurityConstants.HEADER_STRING;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -31,92 +32,60 @@ import java.util.stream.Collectors;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder encoder;
+    private final FirebaseAuth firebaseAuth;
     private final JwtUtils jwtUtils;
+    private final SecurityService securityService;
+    private final UserRepository userRepository;
 
+    @Autowired
     public AuthController(@Nonnull final AuthenticationManager authenticationManager,
-                          @Nonnull final RoleRepository roleRepository,
-                          @Nonnull final PasswordEncoder encoder,
-                          @Nonnull final JwtUtils jwtUtils) {
+                          @Nonnull final FirebaseAuth firebaseAuth,
+                          @Nonnull final JwtUtils jwtUtils,
+                          @Nonnull final SecurityService securityService,
+                          @Nonnull final UserRepository userRepository) {
         this.authenticationManager = authenticationManager;
-        this.roleRepository = roleRepository;
-        this.encoder = encoder;
+        this.firebaseAuth = firebaseAuth;
         this.jwtUtils = jwtUtils;
+        this.securityService = securityService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest signInRequest) {
+    public ResponseEntity<?> authenticate(@RequestHeader(value = HEADER_STRING) String idToken) throws Exception{
 
-        /*final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signInRequest.getLogin(), signInRequest.getPassword()));
+        final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(idToken).get();
+        final String uid = decodedToken.getUid();
+
+        final Authentication authentication = authenticationManager.authenticate(
+                new BearerTokenAuthenticationToken(uid));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String jwt = jwtUtils.generateJwtToken(authentication);
 
-        final UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        final List<String> roles = userDetails.getAuthorities().stream()
+        final UserDTO userDetails = securityService.getUser(SecurityContextHolder.getContext());
+        final List<String> roles = userDetails.getClaims().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getId(),
-                userDetails.getUsername(),
+                userDetails.getName(),
                 userDetails.getEmail(),
-                roles));*/
+                roles));
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-        /*if (credentialsRepository.existsCredentialsByLogin(signUpRequest.getUsername())) {
+    public ResponseEntity<?> register(@Valid @RequestBody SignUpRequest signUpRequest,
+                                      @RequestHeader(value = HEADER_STRING) String idToken) {
+        if (userRepository.findByToken(idToken).isPresent()) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+                    .body(new MessageResponse("Error: User is already exists!"));
         }
+        final User user = new User(signUpRequest.getFirstName(),
+                signUpRequest.getLastName(),
+                idToken);
 
-        if (credentialsRepository.existsCredentialsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
-        }
-
-        // Create new user's account
-        final Credentials credentials = new Credentials(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
-
-        final Set<String> strRoles = signUpRequest.getRole();
-        final Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            final Role userRole = roleRepository.findRoleByName(RoleConstants.ROLE_GUEST)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                switch (role) {
-                    case "Expert":
-                        final Role adminRole = roleRepository.findRoleByName(RoleConstants.ROLE_EXPERT)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-                        break;
-                    case "Active":
-                        final Role modRole = roleRepository.findRoleByName(RoleConstants.ROLE_ACTIVE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
-
-                        break;
-                    default:
-                        final Role userRole = roleRepository.findRoleByName(RoleConstants.ROLE_GUEST)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
-                }
-            });
-        }
-
-        credentials.setRoles(roles);
-        credentialsRepository.save(credentials);*/
-
+        userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

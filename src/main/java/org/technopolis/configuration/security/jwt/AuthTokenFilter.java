@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.technopolis.configuration.security.SecurityService;
 import org.technopolis.configuration.security.model.UserDTO;
 
 import javax.annotation.Nonnull;
@@ -21,14 +22,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class AuthTokenFilter extends OncePerRequestFilter {
 
     @Autowired
-    private JwtUtils jwtUtils;
-    @Autowired
     private FirebaseAuth firebaseAuth;
+    @Autowired
+    private SecurityService securityService;
 
     @Override
     protected void doFilterInternal(@Nonnull final HttpServletRequest request,
@@ -39,7 +41,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     }
 
     private void authorize(@Nonnull final HttpServletRequest request) {
-        final String idToken = jwtUtils.getTokenFromRequest(request);
+        final String idToken = securityService.getTokenFromRequest(request);
         FirebaseToken decodedToken = null;
         try {
             decodedToken = firebaseAuth.verifyIdToken(idToken);
@@ -63,6 +65,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 .name(decodedToken.getName())
                 .email(decodedToken.getEmail())
                 .isEmailVerified(decodedToken.isEmailVerified())
+                .claims(decodedToken.getClaims().keySet().stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList()))
                 .build();
     }
 }

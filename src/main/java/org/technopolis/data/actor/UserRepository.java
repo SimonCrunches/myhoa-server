@@ -14,5 +14,5 @@ public interface UserRepository extends BaseRepository<User> {
 
     Optional<User> findByLastName(@Nonnull final String lastName);
 
-    Optional<User> findByCredentials(@Nonnull final Credentials credentials);
+    Optional<User> findByToken(@Nonnull final String token);
 }

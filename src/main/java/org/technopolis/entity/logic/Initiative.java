@@ -11,6 +11,7 @@ import org.technopolis.entity.actors.User;
 import javax.persistence.*;
 import java.time.ZonedDateTime;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class Initiative extends AbstractEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "descrioption", nullable = false)
+    @Column(name = "description", nullable = false)
     private String description;
 
     @Column(name = "latitude", nullable = false)
@@ -35,8 +36,8 @@ public class Initiative extends AbstractEntity {
 
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "author_id", nullable = false)
-    private User author;
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @Column(name = "creation_date", nullable = false)
     private ZonedDateTime creationDate;

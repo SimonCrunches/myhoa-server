@@ -13,20 +13,18 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.technopolis.configuration.security.SecurityService;
 import org.technopolis.configuration.security.jwt.JwtUtils;
+import org.technopolis.configuration.security.model.SecurityConstants;
 import org.technopolis.configuration.security.model.UserDTO;
 import org.technopolis.data.actor.UserRepository;
 import org.technopolis.entity.actors.User;
-import org.technopolis.payload.request.SignUpRequest;
 import org.technopolis.payload.response.JwtResponse;
 import org.technopolis.payload.response.MessageResponse;
 
 import javax.annotation.Nonnull;
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static org.technopolis.configuration.security.model.SecurityConstants.HEADER_FIREBASE;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -53,43 +51,36 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> authenticate(@RequestHeader(value = HEADER_FIREBASE) String idToken) throws Exception{
-
+    public ResponseEntity<?> authenticate(@RequestHeader(value = SecurityConstants.HEADER_FIREBASE) String idToken) throws Exception {
         final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(idToken).get();
+
+        final Optional<User> existedUser = userRepository.findByToken(decodedToken.getUid());
+        if (existedUser.isPresent()) {
+            return ResponseEntity.ok(new MessageResponse("User already exists",
+                    existedUser.get().getJwtToken()));
+        }
 
         final UserDTO userDetails = securityService.getUser(SecurityContextHolder.getContext());
         final List<GrantedAuthority> authorities = new ArrayList<>();
         decodedToken.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));
 
         final Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userDetails, decodedToken, authorities));
+                new UsernamePasswordAuthenticationToken(userDetails, null, authorities));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String jwt = jwtUtils.generateJwtToken(authentication);
 
+        final User user = new User(userDetails.getName(),
+                null,
+                userDetails.getUid(),
+                jwt);
+
+        userRepository.save(user);
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getName(),
                 userDetails.getEmail(),
                 authorities.stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList())));
-    }
-
-    @PostMapping("/sign-up")
-    public ResponseEntity<?> register(@Valid @RequestBody SignUpRequest signUpRequest,
-                                      @RequestHeader(value = HEADER_FIREBASE) String idToken) throws Exception {
-        if (userRepository.findByToken(idToken).isPresent()) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: User is already exists!"));
-        }
-        final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(idToken).get();
-
-        final User user = new User(signUpRequest.getFirstName(),
-                signUpRequest.getLastName(),
-                decodedToken.getUid());
-
-        userRepository.save(user);
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

@@ -21,18 +21,23 @@ public class User extends AbstractEntity {
     @Column(name = "first_name", nullable = false)
     protected String firstName;
 
-    @Column(name = "last_name", nullable = false)
+    @Column(name = "last_name")
     protected String lastName;
 
-    @Column(name = "token", nullable = false)
-    protected String token;
+    @Column(name = "firebaseToken", nullable = false)
+    protected String firebaseToken;
+
+    @Column(name = "jwtToken", nullable = false)
+    protected String jwtToken;
 
     public User(@Nonnull final String firstName,
-                @Nonnull final String lastName,
-                @Nonnull final String token) {
+                final String lastName,
+                @Nonnull final String firebaseToken,
+                @Nonnull final String jwtToken) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.token = token;
+        this.firebaseToken = firebaseToken;
+        this.jwtToken = jwtToken;
     }
 
     @JsonBackReference

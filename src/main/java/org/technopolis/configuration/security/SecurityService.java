@@ -1,5 +1,7 @@
 package org.technopolis.configuration.security;
 
+import com.google.firebase.auth.FirebaseToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -9,6 +11,8 @@ import org.technopolis.configuration.security.model.UserDTO;
 import javax.annotation.Nonnull;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.stream.Collectors;
 
 import static org.technopolis.configuration.security.model.SecurityConstants.HEADER_STRING;
 import static org.technopolis.configuration.security.model.SecurityConstants.TOKEN_PREFIX;
@@ -37,6 +41,18 @@ public class SecurityService {
             }
         }
         return token;
+    }
+
+    public UserDTO firebaseTokenToUserDto(@Nonnull final FirebaseToken decodedToken) {
+        return UserDTO.builder()
+                .uid(decodedToken.getUid())
+                .name(decodedToken.getName())
+                .email(decodedToken.getEmail())
+                .isEmailVerified(decodedToken.isEmailVerified())
+                .claims(decodedToken.getClaims().keySet().stream()
+                        .map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList()))
+                .build();
     }
 
 }

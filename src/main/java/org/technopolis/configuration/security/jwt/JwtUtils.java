@@ -4,23 +4,31 @@ import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.technopolis.configuration.security.model.SecurityConstants;
+import org.technopolis.configuration.security.model.UserDTO;
 
 import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
+
+import static org.technopolis.configuration.security.model.SecurityConstants.HEADER_STRING;
+import static org.technopolis.configuration.security.model.SecurityConstants.TOKEN_PREFIX;
 
 @Component
 @Slf4j
 public class JwtUtils {
 
     public String generateJwtToken(@Nonnull final Authentication authentication) {
-        return Jwts.builder().setSubject((authentication.getName())).setIssuedAt(new Date())
+        final UserDTO userPrincipal = (UserDTO) authentication.getPrincipal();
+
+        return Jwts.builder().setSubject(userPrincipal.getUid()).setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
                 .compact();
     }
 
-    public String getLoginFromJwtToken(@Nonnull final String token) {
+    public String getTokenFromJwtToken(@Nonnull final String token) {
         return Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getSubject();
     }
 
@@ -41,5 +49,13 @@ public class JwtUtils {
         }
 
         return false;
+    }
+
+    public String parseJwt(@Nonnull final HttpServletRequest request) {
+        final String headerAuth = request.getHeader(HEADER_STRING);
+        if (StringUtils.hasText(headerAuth) && headerAuth.startsWith(TOKEN_PREFIX)) {
+            return headerAuth.substring(7);
+        }
+        return null;
     }
 }

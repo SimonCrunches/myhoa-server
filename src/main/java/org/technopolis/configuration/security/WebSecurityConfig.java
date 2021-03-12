@@ -29,12 +29,14 @@ import java.util.Map;
         prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
+    private final AuthTokenFilter authTokenFilter;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-        return new AuthTokenFilter();
+    @Autowired
+    public WebSecurityConfig(@Nonnull final ObjectMapper objectMapper,
+                             @Nonnull final AuthTokenFilter authTokenFilter) {
+        this.objectMapper = objectMapper;
+        this.authTokenFilter = authTokenFilter;
     }
 
     @Bean
@@ -73,6 +75,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .httpBasic();
 
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }
 }

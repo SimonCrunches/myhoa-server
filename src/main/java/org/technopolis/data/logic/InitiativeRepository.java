@@ -2,7 +2,7 @@ package org.technopolis.data.logic;
 
 import org.springframework.stereotype.Repository;
 import org.technopolis.data.BaseRepository;
-import org.technopolis.entity.actors.User;
+import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.entity.logic.Category;
 import org.technopolis.entity.logic.Initiative;
 
@@ -17,5 +17,5 @@ public interface InitiativeRepository extends BaseRepository<Initiative> {
 
     Optional<Initiative> findByTitle(@Nonnull final String title);
 
-    List<Initiative> findByUser(@Nonnull final User user);
+    List<Initiative> findByActiveUser(@Nonnull final ActiveUser activeUser);
 }

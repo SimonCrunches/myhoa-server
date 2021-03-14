@@ -6,8 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.technopolis.data.actor.UserRepository;
-import org.technopolis.entity.actors.User;
+import org.technopolis.data.actor.ActiveUserRepository;
+import org.technopolis.entity.actors.ActiveUser;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ExecutionException;
@@ -16,15 +16,15 @@ import java.util.concurrent.ExecutionException;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private ActiveUserRepository activeUserRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(@Nonnull final String username) {
-        final User user = userRepository.findByFirebaseToken(username)
+        final ActiveUser activeUser = activeUserRepository.findByFirebaseToken(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
         try {
-            return new UserDetailsImpl(user);
+            return new UserDetailsImpl(activeUser);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

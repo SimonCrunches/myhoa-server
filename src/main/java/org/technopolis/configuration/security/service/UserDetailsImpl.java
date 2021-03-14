@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import org.technopolis.entity.actors.User;
+import org.technopolis.entity.actors.ActiveUser;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -38,9 +38,9 @@ public class UserDetailsImpl implements UserDetails {
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(@Nonnull final User user) throws ExecutionException, InterruptedException {
+    public UserDetailsImpl(@Nonnull final ActiveUser activeUser) throws ExecutionException, InterruptedException {
 
-        final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(user.getFirebaseToken()).get();
+        final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(activeUser.getFirebaseToken()).get();
         final List<GrantedAuthority> authorities = new ArrayList<>();
         decodedToken.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));
 

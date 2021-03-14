@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.technopolis.entity.AbstractEntity;
-import org.technopolis.entity.actors.User;
+import org.technopolis.entity.actors.ActiveUser;
 
 import javax.persistence.*;
 import java.time.ZonedDateTime;
@@ -16,6 +16,7 @@ import java.time.ZonedDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "initiative")
 public class Initiative extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
@@ -36,8 +37,8 @@ public class Initiative extends AbstractEntity {
 
     @JsonManagedReference
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "active_user_id", nullable = false)
+    private ActiveUser activeUser;
 
     @Column(name = "creation_date", nullable = false)
     private ZonedDateTime creationDate;

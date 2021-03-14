@@ -15,8 +15,8 @@ import org.technopolis.configuration.security.SecurityService;
 import org.technopolis.configuration.security.jwt.JwtUtils;
 import org.technopolis.configuration.security.model.SecurityConstants;
 import org.technopolis.configuration.security.model.UserDTO;
-import org.technopolis.data.actor.UserRepository;
-import org.technopolis.entity.actors.User;
+import org.technopolis.data.actor.ActiveUserRepository;
+import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.payload.response.JwtResponse;
 import org.technopolis.payload.response.MessageResponse;
 
@@ -35,26 +35,26 @@ public class AuthController {
     private final FirebaseAuth firebaseAuth;
     private final JwtUtils jwtUtils;
     private final SecurityService securityService;
-    private final UserRepository userRepository;
+    private final ActiveUserRepository activeUserRepository;
 
     @Autowired
     public AuthController(@Nonnull final AuthenticationManager authenticationManager,
                           @Nonnull final FirebaseAuth firebaseAuth,
                           @Nonnull final JwtUtils jwtUtils,
                           @Nonnull final SecurityService securityService,
-                          @Nonnull final UserRepository userRepository) {
+                          @Nonnull final ActiveUserRepository activeUserRepository) {
         this.authenticationManager = authenticationManager;
         this.firebaseAuth = firebaseAuth;
         this.jwtUtils = jwtUtils;
         this.securityService = securityService;
-        this.userRepository = userRepository;
+        this.activeUserRepository = activeUserRepository;
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticate(@RequestHeader(value = SecurityConstants.HEADER_FIREBASE) String idToken) throws Exception {
         final FirebaseToken decodedToken = firebaseAuth.verifyIdTokenAsync(idToken).get();
 
-        final Optional<User> existedUser = userRepository.findByFirebaseToken(decodedToken.getUid());
+        final Optional<ActiveUser> existedUser = activeUserRepository.findByFirebaseToken(decodedToken.getUid());
         if (existedUser.isPresent()) {
             return ResponseEntity.ok(new MessageResponse("User already exists",
                     existedUser.get().getJwtToken()));
@@ -70,12 +70,12 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final String jwt = jwtUtils.generateJwtToken(authentication);
 
-        final User user = new User(userDetails.getName(),
+        final ActiveUser activeUser = new ActiveUser(userDetails.getName(),
                 null,
                 userDetails.getUid(),
                 jwt);
 
-        userRepository.save(user);
+        activeUserRepository.save(activeUser);
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getName(),
                 userDetails.getEmail(),

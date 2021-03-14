@@ -16,7 +16,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
-public class User extends AbstractEntity {
+@Table(name = "active_user")
+public class ActiveUser extends AbstractEntity {
 
     @Column(name = "first_name", nullable = false)
     protected String firstName;
@@ -30,10 +31,10 @@ public class User extends AbstractEntity {
     @Column(name = "jwtToken", nullable = false)
     protected String jwtToken;
 
-    public User(@Nonnull final String firstName,
-                final String lastName,
-                @Nonnull final String firebaseToken,
-                @Nonnull final String jwtToken) {
+    public ActiveUser(@Nonnull final String firstName,
+                      final String lastName,
+                      @Nonnull final String firebaseToken,
+                      @Nonnull final String jwtToken) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.firebaseToken = firebaseToken;
@@ -41,7 +42,7 @@ public class User extends AbstractEntity {
     }
 
     @JsonBackReference
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true)
     protected Set<Initiative> createdInitiatives = new HashSet<>();
 
 }

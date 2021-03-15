@@ -67,12 +67,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                     .antMatchers("/api/v1.0/user/**").hasRole("ACTIVE_USER")
-                    .anyRequest().permitAll().and()
-                .formLogin()
-                    .loginPage("/login")
+                    .anyRequest().permitAll().and();
+                /*.formLogin()
+                    .loginPage("/api/v1.0/login")
                     .permitAll()
                     .and()
-                .httpBasic();
+                .httpBasic();*/
 
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
     }

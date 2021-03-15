@@ -1,5 +1,9 @@
 server:
   port: ${PORT:5000}
+  servlet:
+    session:
+      cookie:
+        http-only: true
 
 spring:
   datasource:

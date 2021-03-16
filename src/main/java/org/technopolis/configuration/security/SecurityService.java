@@ -20,15 +20,6 @@ import static org.technopolis.configuration.security.model.SecurityConstants.TOK
 @Service
 public class SecurityService {
 
-    public UserDTO getUser(@Nonnull final SecurityContext securityContext) {
-        UserDTO userPrincipal = null;
-        Object principal = securityContext.getAuthentication().getPrincipal();
-        if (principal instanceof UserDTO) {
-            userPrincipal = ((UserDTO) principal);
-        }
-        return userPrincipal;
-    }
-
     public String getTokenFromRequest(@Nonnull final HttpServletRequest request) {
         String token = null;
         final Cookie cookieToken = WebUtils.getCookie(request, "token");

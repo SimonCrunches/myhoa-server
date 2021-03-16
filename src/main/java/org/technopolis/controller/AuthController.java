@@ -60,7 +60,7 @@ public class AuthController {
                     existedUser.get().getJwtToken()));
         }
 
-        final UserDTO userDetails = securityService.getUser(SecurityContextHolder.getContext());
+        final UserDTO userDetails = securityService.firebaseTokenToUserDto(decodedToken);
         final List<GrantedAuthority> authorities = new ArrayList<>();
         decodedToken.getClaims().forEach((k, v) -> authorities.add(new SimpleGrantedAuthority(k)));
 

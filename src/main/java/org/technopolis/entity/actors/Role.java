@@ -1,9 +1,10 @@
 package org.technopolis.entity.actors;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.technopolis.configuration.security.model.RoleConstants;
+import org.springframework.security.core.GrantedAuthority;
 import org.technopolis.entity.AbstractEntity;
 
 import javax.persistence.*;
@@ -12,11 +13,15 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "role")
-public class Role extends AbstractEntity {
+public class Role extends AbstractEntity implements GrantedAuthority {
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RoleConstants name;
+    private String authority;
 
+    @Override
+    public String getAuthority() {
+        return authority;
+    }
 }

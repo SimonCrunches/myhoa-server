@@ -1,5 +1,6 @@
 package org.technopolis.configuration.security.auth.firebase;
 
+import com.google.firebase.auth.FirebaseToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -26,16 +27,13 @@ public class FirebaseAuthenticationProvider implements AuthenticationProvider {
             return null;
         }
 
-        FirebaseAuthenticationToken authenticationToken = (FirebaseAuthenticationToken) authentication;
-        final UserDetails details = userService.loadUserByUsername(authenticationToken.getName());
+        FirebaseAuthenticationToken token = (FirebaseAuthenticationToken) authentication;
+        final UserDetails details = userService.loadUserByUsername(authentication.getName());
         if (details == null) {
             throw new FirebaseUserNotExistsException();
         }
 
-        authenticationToken = new FirebaseAuthenticationToken(details, authentication.getCredentials(),
-                details.getAuthorities());
-
-        return authenticationToken;
+        return new FirebaseAuthenticationToken(details, token.getCredentials(), details.getAuthorities());
     }
 
 }

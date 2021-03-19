@@ -48,8 +48,7 @@ public class UserServiceImpl implements UserService {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
 
-        return new User(userDetails.getUsername(),
-                userDetails.getPassword(), grantedAuthorities);
+        return new User(userDetails.getUsername(), userDetails.getPassword(), grantedAuthorities);
     }
 
     @Override
@@ -65,8 +64,6 @@ public class UserServiceImpl implements UserService {
             userEntity.setEmail(init.getEmail());
             userEntity.setFirebaseToken(init.getToken());
             userEntity.setAuthorities(getUserRoles());
-            // TODO firebase users should not be able to login via username and
-            // password so for now generation of password is OK
             userEntity.setPassword(UUID.randomUUID().toString());
             userDao.save(userEntity);
             logger.info("registerUser -> user created");

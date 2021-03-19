@@ -30,3 +30,8 @@ spring:
       ddl-auto: update
     open-in-view: off
 
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG

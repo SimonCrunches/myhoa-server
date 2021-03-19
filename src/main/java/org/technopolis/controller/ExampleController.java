@@ -1,27 +1,32 @@
 package org.technopolis.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
+@RequestMapping(value = "/api")
 public class ExampleController {
-    @GetMapping(value = "/api/open/example")
+
+    @GetMapping(value = "/open/example")
+    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
     @ResponseStatus(code = HttpStatus.OK)
     public Object apiOpen() {
         return new HashMap<String, String>();
     }
 
-    @GetMapping(value = "/api/active_user/example")
+    @GetMapping(value = "/active_user/example")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
     public Object apiActiveUser() {
         return new HashMap<String, String>();
     }
 
-    @GetMapping(value = "/api/expert/example")
+    @GetMapping(value = "/expert/example")
+    @PreAuthorize("hasRole('ROLE_EXPERT')")
     @ResponseStatus(code = HttpStatus.OK)
     public Object apiExpert() {
         return new HashMap<String, String>();

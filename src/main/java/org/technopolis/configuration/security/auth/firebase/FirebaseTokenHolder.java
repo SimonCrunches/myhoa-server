@@ -4,14 +4,18 @@ import com.google.api.client.util.ArrayMap;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.Data;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 
 @Data
 public class FirebaseTokenHolder {
     private FirebaseToken token;
+    private String idToken;
 
-    public FirebaseTokenHolder(FirebaseToken token) {
+    public FirebaseTokenHolder(@Nonnull final FirebaseToken token,
+                               @Nonnull final String idToken) {
         this.token = token;
+        this.idToken = idToken;
     }
 
     public String getEmail() {

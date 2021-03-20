@@ -1,39 +1,57 @@
 package org.technopolis.configuration.security.auth.firebase;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
-import org.technopolis.service.UserService;
-import org.technopolis.service.exception.FirebaseUserNotExistsException;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class FirebaseAuthenticationProvider implements AuthenticationProvider {
 
-    @Autowired
-    private UserService userService;
+    private final FirebaseAuth firebaseAuth;
 
-    public boolean supports(Class<?> authentication) {
+    @Autowired
+    public FirebaseAuthenticationProvider(@Nonnull final FirebaseAuth firebaseAuth) {
+        this.firebaseAuth = firebaseAuth;
+    }
+
+    public boolean supports(@Nonnull final Class<?> authentication) {
         return (FirebaseAuthenticationToken.class.isAssignableFrom(authentication));
     }
 
-    public Authentication authenticate(@Nonnull final Authentication authentication) throws AuthenticationException {
+    public Authentication authenticate(@Nonnull final Authentication authentication)
+            throws AuthenticationException {
         if (!supports(authentication.getClass())) {
             return null;
         }
 
-        FirebaseAuthenticationToken token = (FirebaseAuthenticationToken) authentication;
-        final UserDetails details = userService.loadUserByUsername(authentication.getName());
-        if (details == null) {
-            throw new FirebaseUserNotExistsException();
+        final FirebaseAuthenticationToken token = (FirebaseAuthenticationToken) authentication;
+        final FirebaseTokenHolder holder = (FirebaseTokenHolder) token.getCredentials();
+        FirebaseAuthenticationToken result = null;
+        try {
+            final FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(holder.getIdToken());
+            final FirebaseTokenHolder tokenHolder = new FirebaseTokenHolder(firebaseToken, holder.getIdToken());
+            final UserRecord userRecord = firebaseAuth.getUser(tokenHolder.getUid());
+            result = new FirebaseAuthenticationToken(userRecord.getUid(),
+                    tokenHolder,
+                    userRecord.getCustomClaims().keySet().stream()
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList())
+            );
+        } catch (FirebaseAuthException e) {
+            e.printStackTrace();
         }
-
-        return new FirebaseAuthenticationToken(details, token.getCredentials(), details.getAuthorities());
+        return result;
     }
 
 }

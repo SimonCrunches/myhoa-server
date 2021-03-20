@@ -20,7 +20,7 @@ public class FirebaseParser {
             for (final Map.Entry<String, Object> entry : claims.entrySet()) {
                 System.out.println("Claim: key - " + entry.getKey() + ", value - " + entry.getValue());
             }
-            return new FirebaseTokenHolder(token);
+            return new FirebaseTokenHolder(token, idToken);
         } catch (Exception e) {
             throw new FirebaseTokenInvalidException(e.getMessage());
         }

@@ -12,14 +12,14 @@ import java.util.HashMap;
 public class ExampleController {
 
     @GetMapping(value = "/open/example")
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
     public Object apiOpen() {
         return new HashMap<String, String>();
     }
 
     @GetMapping(value = "/active_user/example")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_ACTIVE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
     public Object apiActiveUser() {
         return new HashMap<String, String>();

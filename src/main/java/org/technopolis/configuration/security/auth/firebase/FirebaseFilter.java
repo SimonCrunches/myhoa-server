@@ -18,6 +18,7 @@ import java.io.IOException;
 
 @Component
 public class FirebaseFilter extends OncePerRequestFilter {
+
     private final FirebaseService firebaseService;
 
     public FirebaseFilter(@Nonnull final FirebaseService firebaseService) {
@@ -29,15 +30,13 @@ public class FirebaseFilter extends OncePerRequestFilter {
                                     @Nonnull final HttpServletResponse response,
                                     @Nonnull final FilterChain filterChain)
             throws ServletException, IOException {
-
         final String xAuth = request.getHeader(SecurityConstants.HEADER_FIREBASE);
         if (StringUtils.isBlank(xAuth)) {
             filterChain.doFilter(request, response);
         } else {
             try {
                 final FirebaseTokenHolder holder = firebaseService.parseToken(xAuth);
-                final String userName = holder.getName();
-                final Authentication auth = new FirebaseAuthenticationToken(userName, holder);
+                final Authentication auth = new FirebaseAuthenticationToken(holder.getUid(), holder);
                 SecurityContextHolder.getContext().setAuthentication(auth);
 
                 filterChain.doFilter(request, response);

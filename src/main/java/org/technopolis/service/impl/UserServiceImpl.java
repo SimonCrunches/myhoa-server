@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
             return null;
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for (GrantedAuthority role : userDetails.getAuthorities()) {
+        for (final GrantedAuthority role : userDetails.getAuthorities()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
 
@@ -53,8 +53,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    @Secured(value = SecurityConfig.Roles.ROLE_ANONYMOUS)
-    public ActiveUser registerUser(RegisterUserInit init) {
+    @Secured(value = SecurityConfig.Roles.ROLE_ACTIVE_USER)
+    public ActiveUser registerUser(@Nonnull final RegisterUserInit init) {
 
         final ActiveUser userLoaded = userDao.findByUsername(init.getUserName()).orElse(null);
 
@@ -63,7 +63,9 @@ public class UserServiceImpl implements UserService {
             userEntity.setUsername(init.getUserName());
             userEntity.setEmail(init.getEmail());
             userEntity.setFirebaseToken(init.getToken());
-            userEntity.setAuthorities(getUserRoles());
+            userEntity.setFirstName(init.getUserName());
+            userEntity.setLastName(init.getUserName());
+            userEntity.setAuthorities(getActiveUserRoles());
             userEntity.setPassword(UUID.randomUUID().toString());
             userDao.save(userEntity);
             logger.info("registerUser -> user created");
@@ -100,8 +102,8 @@ public class UserServiceImpl implements UserService {
         return Collections.singleton(getRole(SecurityConfig.Roles.ROLE_EXPERT));
     }
 
-    private Set<Role> getUserRoles() {
-        return Collections.singleton(getRole(SecurityConfig.Roles.ROLE_USER));
+    private Set<Role> getActiveUserRoles() {
+        return Collections.singleton(getRole(SecurityConfig.Roles.ROLE_ACTIVE_USER));
     }
 
     private Role getRole(@Nonnull final String authority) {

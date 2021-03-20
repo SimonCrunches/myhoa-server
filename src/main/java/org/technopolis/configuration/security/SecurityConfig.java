@@ -12,11 +12,11 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.technopolis.configuration.security.auth.firebase.FirebaseAuthenticationProvider;
 import org.technopolis.configuration.security.auth.firebase.FirebaseFilter;
 import org.technopolis.service.FirebaseService;
@@ -26,17 +26,18 @@ import javax.annotation.Nonnull;
 import java.sql.Timestamp;
 import java.util.*;
 
+@EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     public final static class Roles {
-        public static final String ANONYMOUS = "ANONYMOUS";
         public static final String USER = "USER";
+        public static final String ACTIVE_USER = "ACTIVE_USER";
         public static final String EXPERT = "EXPERT";
 
         private static final String ROLE_ = "ROLE_";
-        public static final String ROLE_ANONYMOUS = ROLE_ + ANONYMOUS;
         public static final String ROLE_USER = ROLE_ + USER;
+        public static final String ROLE_ACTIVE_USER = ROLE_ + ACTIVE_USER;
         public static final String ROLE_EXPERT = ROLE_ + EXPERT;
     }
 
@@ -82,14 +83,14 @@ public class SecurityConfig {
 
         @Override
         protected void configure(HttpSecurity http) throws Exception {
-            http.addFilterBefore(tokenAuthorizationFilter(), BasicAuthenticationFilter.class).authorizeRequests()//
-                    /*.antMatchers("/api/open/**").hasAnyRole(Roles.ANONYMOUS)//
-                    .antMatchers("/api/active_user/**").hasRole(Roles.USER)//
-                    .antMatchers("/api/expert/**").hasRole(Roles.EXPERT)*///
-                    .antMatchers("/**").permitAll()//
+            http.addFilterAfter(tokenAuthorizationFilter(), BasicAuthenticationFilter.class).authorizeRequests()//
+                    .antMatchers("/api/open/**").permitAll()//
+                    .antMatchers("/api/active_user/**").hasRole(Roles.ACTIVE_USER)//
+                    .antMatchers("/api/expert/**").hasRole(Roles.EXPERT)//
+                    /*.antMatchers("/**").permitAll()*///
                     .and().cors().and().csrf().disable()//
-                    .anonymous().authorities(Roles.ROLE_ANONYMOUS)
-                    .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    /*.anonymous().authorities(Roles.ROLE_ANONYMOUS)
+                    .and()*/.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and().exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint());//
         }
 

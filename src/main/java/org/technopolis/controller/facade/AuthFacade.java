@@ -1,6 +1,9 @@
 package org.technopolis.controller.facade;
 
+import com.google.firebase.auth.FirebaseAuthException;
+import org.springframework.http.ResponseEntity;
+
 public interface AuthFacade {
 
-    void registerUser(final String firebaseToken);
+    ResponseEntity<?> registerUser(final String firebaseToken) throws FirebaseAuthException;
 }

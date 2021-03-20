@@ -1,13 +1,11 @@
 package org.technopolis.entity.actors;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.technopolis.entity.AbstractEntity;
-import org.technopolis.entity.logic.Initiative;
 
 import javax.annotation.Nonnull;
 import javax.persistence.*;
@@ -56,9 +54,9 @@ public class ActiveUser extends AbstractEntity implements UserDetails {
         this.firebaseToken = firebaseToken;
     }
 
-    @JsonBackReference
+    /*@JsonBackReference
     @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true)
-    protected Set<Initiative> createdInitiatives = new HashSet<>();
+    protected Set<Initiative> createdInitiatives = new HashSet<>();*/
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

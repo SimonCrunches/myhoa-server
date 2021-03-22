@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
-import org.technopolis.entity.AbstractEntity;
 
 import javax.persistence.*;
 
@@ -15,7 +14,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "role")
-public class Role extends AbstractEntity implements GrantedAuthority {
+public class Role implements GrantedAuthority {
+
+    private static final long serialVersionUID = 2L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected Integer id;
 
     @Column(nullable = false)
     private String authority;

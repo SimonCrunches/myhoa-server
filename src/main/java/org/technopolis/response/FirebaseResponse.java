@@ -8,11 +8,10 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class FirebaseResponse {
-    private String accessToken;
-    private String username;
-    private String email;
-    private Collection<? extends GrantedAuthority> roles;
+    private final String accessToken;
+    private final String username;
+    private final String email;
+    private final Object role;
 }

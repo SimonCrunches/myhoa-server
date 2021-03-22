@@ -1,18 +1,15 @@
 package org.technopolis.entity.actors;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.technopolis.entity.AbstractEntity;
 import org.technopolis.entity.logic.Initiative;
 
-import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,8 +17,15 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "active_user")
-public class ActiveUser extends AbstractEntity implements UserDetails {
+public class ActiveUser implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    protected Integer id;
 
     @Column(name = "first_name")
     protected String firstName;
@@ -48,20 +52,12 @@ public class ActiveUser extends AbstractEntity implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> authorities = new HashSet<>();
 
-    public ActiveUser(@Nonnull final String firstName,
-                      @Nonnull final String lastName,
-                      @Nonnull final String firebaseToken) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.firebaseToken = firebaseToken;
-    }
-
     @JsonBackReference
     @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     protected Set<Initiative> createdInitiatives = new HashSet<>();
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<Role> getAuthorities() {
         return authorities;
     }
 

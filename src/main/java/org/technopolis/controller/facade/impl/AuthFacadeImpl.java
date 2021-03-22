@@ -50,7 +50,7 @@ public class AuthFacadeImpl implements AuthFacade {
         return ResponseEntity.ok(new FirebaseResponse(user.getFirebaseToken(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getAuthorities()));
+                user.getAuthorities().stream().findFirst().get()));
     }
 
 }

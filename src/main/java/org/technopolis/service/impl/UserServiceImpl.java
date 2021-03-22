@@ -108,7 +108,12 @@ public class UserServiceImpl implements UserService {
 
     private Role getRole(@Nonnull final String authority) {
         final Role adminRole = roleRepository.findRoleByAuthority(authority).orElse(null);
-        return Objects.requireNonNullElseGet(adminRole, () -> new Role(authority));
+        return Objects.requireNonNullElseGet(adminRole, () -> {
+            final Role newRole = new Role();
+            newRole.setAuthority(authority);
+            roleRepository.save(newRole);
+            return roleRepository.findRoleByAuthority(authority).get();
+        });
     }
 
 }

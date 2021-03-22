@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.technopolis.entity.AbstractEntity;
 import org.technopolis.entity.actors.ActiveUser;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 @Entity
@@ -17,13 +17,7 @@ import java.time.ZonedDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "initiative")
-public class Initiative implements Serializable {
-
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+public class Initiative extends AbstractEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "category", nullable = false)

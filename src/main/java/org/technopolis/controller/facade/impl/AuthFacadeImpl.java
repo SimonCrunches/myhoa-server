@@ -12,12 +12,12 @@ import org.technopolis.configuration.security.SecurityConfig;
 import org.technopolis.configuration.security.auth.firebase.FirebaseTokenHolder;
 import org.technopolis.controller.facade.AuthFacade;
 import org.technopolis.entity.actors.ActiveUser;
+import org.technopolis.response.FirebaseResponse;
 import org.technopolis.service.FirebaseService;
 import org.technopolis.service.UserService;
 import org.technopolis.service.shared.RegisterUserInit;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -47,10 +47,10 @@ public class AuthFacadeImpl implements AuthFacade {
         firebaseAuth.setCustomUserClaims(userRecord.getUid(), Map.of(SecurityConfig.Roles.ROLE_ACTIVE_USER, true));
         System.out.println(userRecord.getCustomClaims());
         final ActiveUser user = userService.registerUser(new RegisterUserInit(tokenHolder.getName(), tokenHolder.getEmail(), tokenHolder.getUid()));
-
-        return ResponseEntity.ok(List.of(
-                Map.of("accessToken", user.getFirebaseToken(), "username", user.getUsername(), "email", user.getEmail(), "roles", user.getAuthorities())
-        ));
+        return ResponseEntity.ok(new FirebaseResponse(user.getFirebaseToken(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getAuthorities()));
     }
 
 }

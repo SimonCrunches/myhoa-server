@@ -2,19 +2,17 @@ package org.technopolis.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.technopolis.entity.actors.Role;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 
-import java.util.Set;
+import java.util.Collection;
 
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class FirebaseResponse {
-
-    private final String accessToken;
-
-    private final String username;
-
-    private final String email;
-
-    private final Set<Role> roles;
+    private String accessToken;
+    private String username;
+    private String email;
+    private Collection<? extends GrantedAuthority> roles;
 }

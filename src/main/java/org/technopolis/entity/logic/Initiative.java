@@ -26,7 +26,7 @@ public class Initiative extends AbstractEntity {
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "description", nullable = false)
+    @Column(name = "description")
     private String description;
 
     @Column(name = "latitude", nullable = false)
@@ -43,15 +43,9 @@ public class Initiative extends AbstractEntity {
     @Column(name = "creation_date", nullable = false)
     private ZonedDateTime creationDate;
 
-    @Column(name = "end_date", nullable = false)
+    @Column(name = "end_date")
     private ZonedDateTime endDate;
 
     @Column(name = "fundings")
     private Integer fundings;
-
-    /*@ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "sponsors",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<User> sponsors = new HashSet<>();*/
 }

@@ -1,27 +1,28 @@
 package org.technopolis.entity.actors;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.technopolis.entity.AbstractEntity;
 import org.technopolis.entity.logic.Initiative;
 
-import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "active_user")
-public class ActiveUser extends AbstractEntity implements UserDetails {
+public class ActiveUser implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Integer id;
 
     @Column(name = "first_name")
     protected String firstName;
@@ -46,22 +47,14 @@ public class ActiveUser extends AbstractEntity implements UserDetails {
     @JoinTable(name = "active_user_roles",
             joinColumns = @JoinColumn(name = "active_user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> authorities = new HashSet<>();
-
-    public ActiveUser(@Nonnull final String firstName,
-                      @Nonnull final String lastName,
-                      @Nonnull final String firebaseToken) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.firebaseToken = firebaseToken;
-    }
+    private Set<Role> authorities;
 
     @JsonBackReference
     @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    protected Set<Initiative> createdInitiatives = new HashSet<>();
+    protected Set<Initiative> createdInitiatives;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Set<Role> getAuthorities() {
         return authorities;
     }
 

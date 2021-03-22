@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
         if (userDetails == null)
             return null;
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (final GrantedAuthority role : userDetails.getAuthorities()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
@@ -107,8 +107,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private Role getRole(@Nonnull final String authority) {
-        final Role adminRole = roleRepository.findRoleByAuthority(authority).orElse(null);
-        return Objects.requireNonNullElseGet(adminRole, () -> new Role(authority));
+        return roleRepository.findRoleByAuthority(authority).orElse(null);
+        /*final Role adminRole = roleRepository.findRoleByAuthority(authority).orElse(null);
+        return Objects.requireNonNullElseGet(adminRole, () -> new Role(authority));*/
     }
 
 }

@@ -19,7 +19,6 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.technopolis.configuration.security.auth.firebase.FirebaseAuthenticationProvider;
 import org.technopolis.configuration.security.auth.firebase.FirebaseFilter;
-import org.technopolis.service.FirebaseService;
 import org.technopolis.service.UserService;
 
 import javax.annotation.Nonnull;
@@ -31,12 +30,10 @@ import java.util.*;
 public class SecurityConfig {
 
     public final static class Roles {
-        public static final String USER = "USER";
         public static final String ACTIVE_USER = "ACTIVE_USER";
         public static final String EXPERT = "EXPERT";
 
         private static final String ROLE_ = "ROLE_";
-        public static final String ROLE_USER = ROLE_ + USER;
         public static final String ROLE_ACTIVE_USER = ROLE_ + ACTIVE_USER;
         public static final String ROLE_EXPERT = ROLE_ + EXPERT;
     }
@@ -65,15 +62,8 @@ public class SecurityConfig {
     @Configuration
     protected static class ApplicationSecurity extends WebSecurityConfigurerAdapter {
 
-        private final FirebaseService firebaseService;
-        private final ObjectMapper objectMapper;
-
         @Autowired
-        public ApplicationSecurity(@Nonnull final FirebaseService firebaseService,
-                                   @Nonnull final ObjectMapper objectMapper) {
-            this.firebaseService = firebaseService;
-            this.objectMapper = objectMapper;
-        }
+        private ObjectMapper objectMapper;
 
         @Override
         public void configure(@Nonnull final WebSecurity web) {
@@ -87,7 +77,6 @@ public class SecurityConfig {
                     .antMatchers("/api/open/**").permitAll()//
                     .antMatchers("/api/active_user/**").hasRole(Roles.ACTIVE_USER)//
                     .antMatchers("/api/expert/**").hasRole(Roles.EXPERT)//
-                    /*.antMatchers("/**").permitAll()*///
                     .and().cors().and().csrf().disable()//
                     /*.anonymous().authorities(Roles.ROLE_ANONYMOUS)
                     .and()*/.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -109,8 +98,9 @@ public class SecurityConfig {
             };
         }
 
-        private FirebaseFilter tokenAuthorizationFilter() {
-            return new FirebaseFilter(firebaseService);
+        @Bean
+        public FirebaseFilter tokenAuthorizationFilter() {
+            return new FirebaseFilter();
         }
 
     }

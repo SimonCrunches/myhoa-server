@@ -1,23 +1,20 @@
 package org.technopolis.controller;
 
 import com.google.firebase.auth.FirebaseAuthException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.technopolis.configuration.security.SecurityConstants;
-import org.technopolis.controller.facade.AuthFacade;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/open")
-public class AuthController {
+@RequestMapping("/api/active_user")
+@PreAuthorize("hasRole('ROLE_ACTIVE_USER')")
+public class ActiveUserController {
 
-    @Autowired
-    private AuthFacade facade;
-
-    @PostMapping(value = "/firebase/login")
+    /*@PostMapping(value = "/add_initiative")
     public ResponseEntity<?> signUp(@RequestHeader(value = SecurityConstants.HEADER_FIREBASE) String firebaseToken)
             throws FirebaseAuthException {
         return facade.registerUser(firebaseToken);
-    }
+    }*/
 }

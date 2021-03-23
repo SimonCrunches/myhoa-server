@@ -1,7 +1,6 @@
 package org.technopolis.service.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,9 +23,8 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
-
-    private final static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private final ActiveUserRepository userDao;
     private final RoleRepository roleRepository;
@@ -43,7 +41,7 @@ public class UserServiceImpl implements UserService {
         if (userDetails == null)
             return null;
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         for (final GrantedAuthority role : userDetails.getAuthorities()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
         }
@@ -68,10 +66,10 @@ public class UserServiceImpl implements UserService {
             userEntity.setAuthorities(getActiveUserRoles());
             userEntity.setPassword(UUID.randomUUID().toString());
             userDao.save(userEntity);
-            logger.info("registerUser -> user created");
-            return userEntity;
+            log.info("registerUser -> user created");
+            return userDao.findByUsername(init.getUserName()).get();
         } else {
-            logger.info("registerUser -> user exists");
+            log.info("registerUser -> user exists");
             return userLoaded;
         }
     }

@@ -41,10 +41,9 @@ public class FirebaseAuthenticationProvider implements AuthenticationProvider {
         try {
             final FirebaseToken firebaseToken = firebaseAuth.verifyIdToken(holder.getIdToken());
             final FirebaseTokenHolder tokenHolder = new FirebaseTokenHolder(firebaseToken, holder.getIdToken());
-            final UserRecord userRecord = firebaseAuth.getUser(tokenHolder.getUid());
-            result = new FirebaseAuthenticationToken(userRecord.getUid(),
+            result = new FirebaseAuthenticationToken(tokenHolder.getUid(),
                     tokenHolder,
-                    userRecord.getCustomClaims().keySet().stream()
+                    tokenHolder.getClaims().keySet().stream()
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList())
             );

@@ -9,7 +9,8 @@ import org.technopolis.entity.actors.ActiveUser;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -47,10 +48,10 @@ public class Initiative implements Serializable {
     private ActiveUser activeUser;
 
     @Column(name = "creation_date", nullable = false)
-    private ZonedDateTime creationDate;
+    private LocalDateTime creationDate;
 
-    @Column(name = "end_date")
-    private ZonedDateTime endDate;
+    @Column(name = "milestone", nullable = false)
+    private LocalDate milestone;
 
     @Column(name = "fundings")
     private Integer fundings;

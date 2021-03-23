@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.Map;
 
 @Data
 public class FirebaseTokenHolder {
@@ -34,9 +35,13 @@ public class FirebaseTokenHolder {
         return token.getUid();
     }
 
-    public String getGoogleId() {
+    public Map<String, Object> getClaims() {
+        return token.getClaims();
+    }
+
+    /*public String getGoogleId() {
         return ((ArrayList<String>) ((ArrayMap) ((ArrayMap) token.getClaims().get("firebase"))
                 .get("identities")).get("google.com")).get(0);
-    }
+    }*/
 
 }

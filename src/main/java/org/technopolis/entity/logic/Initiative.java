@@ -23,7 +23,7 @@ public class Initiative implements Serializable {
     private static final long serialVersionUID = 3L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
     @Enumerated(EnumType.STRING)
@@ -53,6 +53,9 @@ public class Initiative implements Serializable {
     @Column(name = "milestone", nullable = false)
     private LocalDate milestone;
 
-    @Column(name = "fundings")
-    private Integer fundings;
+    @Column(name = "price")
+    private Integer price;
+
+    @Column(name = "contractor")
+    private Boolean contractor;
 }

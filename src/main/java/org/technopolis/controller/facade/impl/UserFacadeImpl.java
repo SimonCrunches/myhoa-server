@@ -1,6 +1,5 @@
 package org.technopolis.controller.facade.impl;
 
-import com.google.firebase.auth.FirebaseAuthException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.technopolis.configuration.security.auth.firebase.FirebaseTokenHolder;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
-import org.technopolis.controller.facade.AuthFacade;
+import org.technopolis.controller.facade.UserFacade;
+import org.technopolis.data.logic.InitiativeRepository;
 import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.response.FirebaseResponse;
 import org.technopolis.service.FirebaseService;
@@ -18,24 +18,27 @@ import org.technopolis.service.shared.RegisterUserInit;
 import javax.annotation.Nonnull;
 
 @Service
-public class AuthFacadeImpl implements AuthFacade {
+public class UserFacadeImpl implements UserFacade {
 
     private final FirebaseService firebaseService;
     private final UserService userService;
     private final JwtUtils jwtUtils;
+    private final InitiativeRepository initiativeRepository;
 
     @Autowired
-    public AuthFacadeImpl(@Nonnull final FirebaseService firebaseService,
+    public UserFacadeImpl(@Nonnull final FirebaseService firebaseService,
                           @Nonnull final UserService userService,
-                          @Nonnull final JwtUtils jwtUtils) {
+                          @Nonnull final JwtUtils jwtUtils,
+                          @Nonnull final InitiativeRepository initiativeRepository) {
         this.firebaseService = firebaseService;
         this.userService = userService;
         this.jwtUtils = jwtUtils;
+        this.initiativeRepository = initiativeRepository;
     }
 
     @Transactional
     @Override
-    public ResponseEntity<?> registerUser(final String firebaseToken) throws FirebaseAuthException {
+    public ResponseEntity<?> authenticate(final String firebaseToken) {
         if (StringUtils.isBlank(firebaseToken)) {
             throw new IllegalArgumentException("FirebaseTokenBlank");
         }
@@ -48,6 +51,11 @@ public class AuthFacadeImpl implements AuthFacade {
                 user.getUsername(),
                 user.getEmail(),
                 user.getAuthorities().stream().findFirst().get()));
+    }
+
+    @Override
+    public ResponseEntity<Object> getInitiatives() {
+        return ResponseEntity.ok(initiativeRepository.findAll());
     }
 
 }

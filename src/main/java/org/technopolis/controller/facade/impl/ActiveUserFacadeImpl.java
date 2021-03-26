@@ -58,6 +58,10 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         newInitiative.setPrice(model.getPrice());
         newInitiative.setContractor(model.getContractor() == 1 ? Boolean.TRUE : Boolean.FALSE);
         initiativeRepository.save(newInitiative);
+        final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
+        if (addedInitiative == null) {
+            return new ResponseEntity<>("Error when adding new initiative", HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(new MessageResponse("Initiative successfully added!"));
     }
 }

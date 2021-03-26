@@ -5,7 +5,8 @@ import javax.annotation.Nonnull;
 public enum Category {
     REPAIR("repair"),
     RESTORATION("restoration"),
-    INFRASTRUCTURE("infrastructure"),
+    CITY_BEAUTIFICATION("city_beautification"),
+    GREEN_BEAUTIFICATION("green_beautification"),
     OTHER("other");
 
     private final String category;

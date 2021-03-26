@@ -20,13 +20,11 @@ import java.time.LocalDateTime;
 @Table(name = "initiative")
 public class Initiative implements Serializable {
 
-    private static final long serialVersionUID = 3L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = CategoryConverter.class)
     @Column(name = "category", nullable = false)
     private Category category;
 

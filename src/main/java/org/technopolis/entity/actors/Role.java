@@ -16,8 +16,6 @@ import javax.persistence.*;
 @Table(name = "role")
 public class Role implements GrantedAuthority {
 
-    private static final long serialVersionUID = 2L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;

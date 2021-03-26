@@ -44,7 +44,7 @@ public class ActiveUser implements UserDetails {
     @Column(name = "firebaseToken", nullable = false)
     protected String firebaseToken;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "active_user_roles",
             joinColumns = @JoinColumn(name = "active_user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

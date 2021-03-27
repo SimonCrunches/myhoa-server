@@ -15,7 +15,7 @@ public class InitiativeDTO {
     private String category;
 
     @NotBlank
-    @JsonProperty("info")
+    @JsonProperty("title")
     private String title;
 
     @JsonProperty("description")
@@ -38,6 +38,6 @@ public class InitiativeDTO {
 
     @NotBlank
     @JsonProperty("contractor")
-    private Integer contractor;
+    private Boolean contractor;
 
 }

@@ -56,7 +56,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         newInitiative.setCreationDate(LocalDateTime.now());
         newInitiative.setMilestone(LocalDate.parse(model.getMilestone(), CommonUtils.LOCALDATE));
         newInitiative.setPrice(model.getPrice());
-        newInitiative.setContractor(model.getContractor() == 1 ? Boolean.TRUE : Boolean.FALSE);
+        newInitiative.setContractor(model.getContractor());
         initiativeRepository.save(newInitiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (addedInitiative == null) {

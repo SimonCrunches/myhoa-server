@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
@@ -21,7 +22,7 @@ public class InitiativeDTO {
     @JsonProperty("description")
     private String description;
 
-    @NotBlank
+    @NotNull
     @JsonProperty("latitude")
     private Double latitude;
 
@@ -29,14 +30,14 @@ public class InitiativeDTO {
     @JsonProperty("longitude")
     private Double longitude;
 
-    @NotBlank
+    @NotNull
     @JsonProperty("milestone")
     private String milestone;
 
     @JsonProperty("price")
     private Integer price;
 
-    @NotBlank
+    @NotNull
     @JsonProperty("contractor")
     private Integer contractor;
 

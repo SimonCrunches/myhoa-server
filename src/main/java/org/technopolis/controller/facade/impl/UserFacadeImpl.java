@@ -43,8 +43,6 @@ public class UserFacadeImpl implements UserFacade {
             throw new IllegalArgumentException("FirebaseTokenBlank");
         }
         final FirebaseTokenHolder tokenHolder = firebaseService.parseToken(firebaseToken);
-        /*final UserRecord userRecord = firebaseAuth.getUser(tokenHolder.getUid());
-        firebaseAuth.setCustomUserClaims(userRecord.getUid(), Map.of(SecurityConfig.Roles.ROLE_ACTIVE_USER, true));*/
         final ActiveUser user = userService.registerUser(new RegisterUserInit(tokenHolder.getName(), tokenHolder.getEmail(), tokenHolder.getUid()));
         final String jwt = jwtUtils.generateJwtToken(user.getUsername());
         return ResponseEntity.ok(new FirebaseResponse(jwt,

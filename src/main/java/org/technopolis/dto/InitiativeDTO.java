@@ -26,11 +26,11 @@ public class InitiativeDTO {
     @JsonProperty("latitude")
     private Double latitude;
 
-    @NotBlank
+    @NotNull
     @JsonProperty("longitude")
     private Double longitude;
 
-    @NotNull
+    @NotBlank
     @JsonProperty("milestone")
     private String milestone;
 

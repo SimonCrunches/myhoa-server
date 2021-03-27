@@ -22,6 +22,6 @@ public class ActiveUserController {
     @PostMapping(value = "/initiatives")
     public ResponseEntity<?> addInitiative(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
                                            @Valid @RequestBody final InitiativeDTO model) {
-        return facade.addInitiative(token, model);
+        return facade.addInitiative(token.substring(7), model);
     }
 }

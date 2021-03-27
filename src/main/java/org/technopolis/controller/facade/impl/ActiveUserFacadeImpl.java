@@ -47,13 +47,13 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
             return new ResponseEntity<>("Initiative already exist", HttpStatus.FOUND);
         }
         final Initiative newInitiative = new Initiative();
-        newInitiative.setCategory(Category.valueOf(model.getCategory()));
+        newInitiative.setCategory(Category.convertToEntityAttribute(model.getCategory()));
         newInitiative.setTitle(model.getTitle());
         newInitiative.setDescription(model.getDescription());
         newInitiative.setLatitude(model.getLatitude());
         newInitiative.setLongitude(model.getLongitude());
         newInitiative.setActiveUser(activeUser);
-        newInitiative.setCreationDate(LocalDateTime.now());
+        newInitiative.setCreationDate(LocalDateTime.parse(LocalDateTime.now().format(CommonUtils.LOCALDATETIME), CommonUtils.LOCALDATETIME));
         newInitiative.setMilestone(LocalDate.parse(model.getMilestone(), CommonUtils.LOCALDATE));
         newInitiative.setPrice(model.getPrice());
         newInitiative.setContractor(model.getContractor());

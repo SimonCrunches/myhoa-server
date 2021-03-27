@@ -43,20 +43,20 @@ public class SecurityConfig {
     protected static class AuthenticationSecurity extends GlobalAuthenticationConfigurerAdapter {
 
         private final UserService userService;
-        //private final FirebaseAuthenticationProvider firebaseProvider;
+        private final FirebaseAuthenticationProvider firebaseProvider;
 
         @Autowired
         public AuthenticationSecurity(@Nonnull final UserService userService
-                //, @Nonnull final FirebaseAuthenticationProvider firebaseProvider
+                , @Nonnull final FirebaseAuthenticationProvider firebaseProvider
         ) {
             this.userService = userService;
-            //this.firebaseProvider = firebaseProvider;
+            this.firebaseProvider = firebaseProvider;
         }
 
         @Override
         public void init(AuthenticationManagerBuilder auth) throws Exception {
             auth.userDetailsService(userService);
-            //auth.authenticationProvider(firebaseProvider);
+            auth.authenticationProvider(firebaseProvider);
         }
     }
 

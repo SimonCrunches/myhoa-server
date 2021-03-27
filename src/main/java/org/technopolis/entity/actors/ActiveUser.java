@@ -51,7 +51,7 @@ public class ActiveUser implements UserDetails {
     private Set<Role> authorities = new HashSet<>();
 
     @JsonBackReference
-    @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "activeUser", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     protected Set<Initiative> createdInitiatives = new HashSet<>();
 
     @Override

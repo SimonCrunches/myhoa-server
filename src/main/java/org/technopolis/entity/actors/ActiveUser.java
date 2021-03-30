@@ -38,7 +38,7 @@ public class ActiveUser implements UserDetails {
     private String password;
 
     @Column(name = "email", nullable = false, unique = true)
-    @Email
+    @Email(regexp=".*@.*\\..*")
     private String email;
 
     @Column(name = "firebaseToken", nullable = false)

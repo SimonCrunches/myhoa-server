@@ -1,4 +1,4 @@
-package org.technopolis.entity.logic;
+package org.technopolis.entity.enums;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

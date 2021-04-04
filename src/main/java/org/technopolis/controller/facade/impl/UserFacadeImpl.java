@@ -2,6 +2,7 @@ package org.technopolis.controller.facade.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,13 @@ public class UserFacadeImpl implements UserFacade {
     @Override
     public ResponseEntity<Object> getInitiatives() {
         return ResponseEntity.ok(initiativeRepository.findAll());
+    }
+
+    @Override
+    public ResponseEntity<Object> getUser(@Nonnull final String username) {
+        final ActiveUser user = userService.getUser(username);
+        return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
+                : ResponseEntity.ok(user);
     }
 
 }

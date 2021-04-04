@@ -57,14 +57,14 @@ public class UserServiceImpl implements UserService {
         final ActiveUser userLoaded = userDao.findByUsername(init.getUserName()).orElse(null);
 
         if (userLoaded == null) {
-            ActiveUser userEntity = new ActiveUser();
-            userEntity.setUsername(init.getUserName());
-            userEntity.setEmail(init.getEmail());
-            userEntity.setFirebaseToken(init.getToken());
-            userEntity.setFirstName(init.getUserName());
-            userEntity.setLastName(init.getUserName());
-            userEntity.setAuthorities(getActiveUserRoles());
-            userEntity.setPassword(UUID.randomUUID().toString());
+            ActiveUser userEntity = ActiveUser.builder()
+                    .username(init.getUserName())
+                    .email(init.getEmail())
+                    .firebaseToken(init.getToken())
+                    .firstName(init.getUserName())
+                    .lastName(init.getUserName())
+                    .authorities(getActiveUserRoles())
+                    .password(UUID.randomUUID().toString()).build();
             userDao.save(userEntity);
             log.info("registerUser -> user created");
             return userDao.findByUsername(init.getUserName()).get();
@@ -74,26 +74,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ActiveUser getUser(@Nonnull final String username) {
+        return userDao.findByUsername(username).orElse(null);
+    }
+
+
     @PostConstruct
     public void init() {
-
-        /*if (userDao.count() == 0) {
-            UserEntity adminEntity = new UserEntity();
-            adminEntity.setUsername("admin");
-            adminEntity.setPassword("admin");
-            adminEntity.setEmail("savic.prvoslav@gmail.com");
-
-            adminEntity.setAuthorities(getAdminRoles());
-            userDao.save(adminEntity);
-
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUsername("user1");
-            userEntity.setPassword("user1");
-            userEntity.setEmail("savic.prvoslav@gmail.com");
-            userEntity.setAuthorities(getUserRoles());
-
-            userDao.save(userEntity);
-        }*/
     }
 
     private Set<Role> getExpertRoles() {

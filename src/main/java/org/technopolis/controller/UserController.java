@@ -15,7 +15,7 @@ public class UserController {
     @Autowired
     private UserFacade facade;
 
-    @PostMapping(value = "/firebase/login")
+    @PostMapping(value = "/login")
     public ResponseEntity<?> login(@RequestHeader(value = SecurityConstants.HEADER_FIREBASE) String firebaseToken)
             throws FirebaseAuthException {
         return facade.authenticate(firebaseToken);
@@ -24,5 +24,10 @@ public class UserController {
     @GetMapping("/initiatives")
     public ResponseEntity<Object> getInitiatives() {
         return facade.getInitiatives();
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<Object> getUser(@PathVariable final String username) {
+        return facade.getUser(username);
     }
 }

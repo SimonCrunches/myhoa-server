@@ -15,7 +15,7 @@ import javax.validation.Valid;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/active_user")
-@PreAuthorize("hasRole('ROLE_ACTIVE_USER')")
+@PreAuthorize("hasAnyRole('ROLE_ACTIVE_USER', 'ROLE_EXPERT')")
 public class ActiveUserController {
 
     @Autowired
@@ -42,5 +42,11 @@ public class ActiveUserController {
     public ResponseEntity<?> editUser(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
                                       @Valid @RequestBody final EditUserDTO model) {
         return facade.editUser(token.substring(7), model);
+    }
+
+    @DeleteMapping(value = "/initiatives/{title}")
+    public ResponseEntity<?> deleteInitiative(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                              @PathVariable final String title) {
+        return facade.deleteInitiative(token.substring(7), title);
     }
 }

@@ -48,7 +48,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         }
         final Initiative initiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (initiative != null) {
-            return new ResponseEntity<>("Initiative already exist", HttpStatus.FOUND);
+            return new ResponseEntity<>("Initiative already exists", HttpStatus.FOUND);
         }
         final Initiative newInitiative = Initiative.builder()
                 .category(Category.convertToEntityAttribute(model.getCategory()))
@@ -60,11 +60,12 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 .creationDate(LocalDateTime.parse(LocalDateTime.now().format(CommonUtils.LOCALDATETIME), CommonUtils.LOCALDATETIME))
                 .milestone(LocalDate.parse(model.getMilestone(), CommonUtils.LOCALDATE))
                 .price(model.getPrice())
-                .contractor(model.getContractor()).build();
+                .contractor(model.getContractor())
+                .image_url(model.getImage_url()).build();
         initiativeRepository.save(newInitiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (addedInitiative == null) {
-            return new ResponseEntity<>("Error when adding new initiative", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Error when adding new initiative", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(new MessageResponse("Initiative successfully added!"));
     }
@@ -72,26 +73,64 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> editInitiative(@Nonnull final String token,
                                             @Nonnull final EditInitiativeDTO model) {
-        /*final ActiveUser activeUser = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
+        final ActiveUser activeUser = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
         if (activeUser == null) {
-            return new ResponseEntity<>("ActiveUser doesnt exist", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
         final Initiative initiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (initiative == null) {
             return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
         }
-
+        if (model.getCategory() != null) {
+            initiative.setCategory(Category.convertToEntityAttribute(model.getCategory()));
+        }
+        if (model.getTitle() != null) {
+            initiative.setTitle(model.getTitle());
+        }
+        if (model.getDescription() != null) {
+            initiative.setDescription(model.getDescription());
+        }
+        if (model.getMilestone() != null) {
+            initiative.setMilestone(LocalDate.parse(model.getMilestone(), CommonUtils.LOCALDATE));
+        }
+        if (model.getPrice() != null) {
+            initiative.setPrice(model.getPrice());
+        }
+        if (model.getContractor() != null) {
+            initiative.setContractor(model.getContractor());
+        }
         initiativeRepository.save(initiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (addedInitiative == null) {
-            return new ResponseEntity<>("Error when adding new initiative", HttpStatus.NOT_FOUND);
-        }*/
+            return new ResponseEntity<>("Error when editing initiative", HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(new MessageResponse("Initiative successfully edited!"));
     }
 
     @Override
     public ResponseEntity<?> editUser(@Nonnull final String token,
                                       @Nonnull final EditUserDTO model) {
+        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        if (model.getFirstName() != null) {
+            user.setFirstName(model.getFirstName());
+        }
+        if (model.getLastName() != null) {
+            user.setLastName(model.getLastName());
+        }
+        if (model.getUsername() != null) {
+            user.setUsername(model.getUsername());
+        }
+        if (model.getEmail() != null) {
+            user.setEmail(model.getEmail());
+        }
+        activeUserRepository.save(user);
+        final ActiveUser addedActiveUser = activeUserRepository.findByUsername(user.getUsername()).orElse(null);
+        if (addedActiveUser == null) {
+            return new ResponseEntity<>("Error when editing user", HttpStatus.BAD_REQUEST);
+        }
         return ResponseEntity.ok(new MessageResponse("User successfully edited!"));
     }
 
@@ -100,5 +139,24 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(user);
+    }
+
+    @Override
+    public ResponseEntity<?> deleteInitiative(@Nonnull final String token,
+                                              @Nonnull final String title) {
+        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final Initiative initiative = initiativeRepository.findByActiveUserAndTitle(user, title).orElse(null);
+        if (initiative == null) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        initiativeRepository.delete(initiative);
+        final Initiative deletedInitiative = initiativeRepository.findByActiveUserAndTitle(user, title).orElse(null);
+        if (deletedInitiative != null) {
+            return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Initiative successfully deleted!"));
     }
 }

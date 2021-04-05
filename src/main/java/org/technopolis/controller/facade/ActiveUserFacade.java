@@ -19,4 +19,7 @@ public interface ActiveUserFacade {
                                @Nonnull final EditUserDTO model);
 
     ResponseEntity<Object> getUser(@Nonnull final String token);
+
+    ResponseEntity<?> deleteInitiative(@Nonnull final String token,
+                                       @Nonnull final String title);
 }

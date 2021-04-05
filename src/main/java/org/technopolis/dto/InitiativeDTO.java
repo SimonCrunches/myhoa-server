@@ -41,4 +41,7 @@ public class InitiativeDTO {
     @JsonProperty("contractor")
     private Boolean contractor;
 
+    @JsonProperty("image_url")
+    private String image_url;
+
 }

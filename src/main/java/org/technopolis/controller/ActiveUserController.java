@@ -27,10 +27,16 @@ public class ActiveUserController {
         return facade.addInitiative(token.substring(7), model);
     }
 
-    @PutMapping(value = "/initiatives")
+    @PutMapping(value = "/initiatives/{id}")
     public ResponseEntity<?> editInitiative(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
-                                            @Valid @RequestBody final EditInitiativeDTO model) {
-        return facade.editInitiative(token.substring(7), model);
+                                            @Valid @RequestBody final EditInitiativeDTO model,
+                                            @PathVariable final Integer id) {
+        return facade.editInitiative(token.substring(7), model, id);
+    }
+
+    @GetMapping(value = "/initiatives")
+    public ResponseEntity<?> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
+        return facade.getInitiatives(token.substring(7));
     }
 
     @GetMapping(value = "/profile")
@@ -44,9 +50,9 @@ public class ActiveUserController {
         return facade.editUser(token.substring(7), model);
     }
 
-    @DeleteMapping(value = "/initiatives/{title}")
+    @DeleteMapping(value = "/initiatives/{id}")
     public ResponseEntity<?> deleteInitiative(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
-                                              @PathVariable final String title) {
-        return facade.deleteInitiative(token.substring(7), title);
+                                              @PathVariable final Integer id) {
+        return facade.deleteInitiative(token.substring(7), id);
     }
 }

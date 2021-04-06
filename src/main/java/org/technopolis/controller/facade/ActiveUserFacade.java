@@ -13,7 +13,10 @@ public interface ActiveUserFacade {
                                     @Nonnull final InitiativeDTO model);
 
     ResponseEntity<?> editInitiative(@Nonnull final String token,
-                                     @Nonnull final EditInitiativeDTO model);
+                                     @Nonnull final EditInitiativeDTO model,
+                                     @Nonnull final Integer id);
+
+    ResponseEntity<Object> getInitiatives(@Nonnull final String token);
 
     ResponseEntity<?> editUser(@Nonnull final String token,
                                @Nonnull final EditUserDTO model);
@@ -21,5 +24,5 @@ public interface ActiveUserFacade {
     ResponseEntity<Object> getUser(@Nonnull final String token);
 
     ResponseEntity<?> deleteInitiative(@Nonnull final String token,
-                                       @Nonnull final String title);
+                                       @Nonnull final Integer id);
 }

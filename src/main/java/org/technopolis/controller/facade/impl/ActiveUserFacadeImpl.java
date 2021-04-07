@@ -23,6 +23,8 @@ import org.technopolis.utils.CommonUtils;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ActiveUserFacadeImpl implements ActiveUserFacade {
@@ -207,6 +209,8 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     public ResponseEntity<Object> getFavourites(@Nonnull final String token) {
         final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
-                : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user));
+                : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user).stream()
+                .map(favouriteInitiative -> initiativeRepository.findById(favouriteInitiative.getId()))
+                .collect(Collectors.toList()));
     }
 }

@@ -61,6 +61,7 @@ public class UserServiceImpl implements UserService {
                     .username(init.getUserName())
                     .email(init.getEmail())
                     .firebaseToken(init.getToken())
+                    .pictureUrl(init.getPicture())
                     .firstName(init.getUserName())
                     .lastName(init.getUserName())
                     .authorities(getActiveUserRoles())
@@ -75,8 +76,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ActiveUser getUser(@Nonnull final String username) {
-        return userDao.findByUsername(username).orElse(null);
+    public ActiveUser getUser(@Nonnull final Integer id) {
+        return userDao.findById(id).orElse(null);
     }
 
 

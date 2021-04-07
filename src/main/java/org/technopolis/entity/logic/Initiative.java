@@ -60,8 +60,8 @@ public class Initiative implements Serializable {
     @Column(name = "contractor")
     private Boolean contractor;
 
-    @Column(name = "image_url")
-    private String image_url;
+    @Column(name = "imageUrl")
+    private String imageUrl;
 
     @JsonBackReference
     @OneToMany(mappedBy = "initiative", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)

@@ -11,5 +11,5 @@ public interface UserFacade {
 
     ResponseEntity<Object> getInitiatives();
 
-    ResponseEntity<Object> getUser(@Nonnull final String username);
+    ResponseEntity<Object> getUser(@Nonnull final Integer id);
 }

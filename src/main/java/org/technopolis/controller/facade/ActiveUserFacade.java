@@ -30,4 +30,7 @@ public interface ActiveUserFacade {
                                    @Nonnull final Integer id);
 
     ResponseEntity<Object> getFavourites(@Nonnull final String token);
+
+    ResponseEntity<?> deleteFavourites(@Nonnull final String token,
+                                       @Nonnull final Integer id);
 }

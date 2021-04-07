@@ -44,7 +44,10 @@ public class UserFacadeImpl implements UserFacade {
             throw new IllegalArgumentException("FirebaseTokenBlank");
         }
         final FirebaseTokenHolder tokenHolder = firebaseService.parseToken(firebaseToken);
-        final ActiveUser user = userService.registerUser(new RegisterUserInit(tokenHolder.getName(), tokenHolder.getEmail(), tokenHolder.getUid()));
+        final ActiveUser user = userService.registerUser(new RegisterUserInit(tokenHolder.getName(),
+                tokenHolder.getEmail(),
+                tokenHolder.getPicture(),
+                tokenHolder.getUid()));
         final String jwt = jwtUtils.generateJwtToken(user.getUsername());
         return ResponseEntity.ok(new FirebaseResponse(jwt,
                 user.getUsername(),
@@ -58,8 +61,8 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
-    public ResponseEntity<Object> getUser(@Nonnull final String username) {
-        final ActiveUser user = userService.getUser(username);
+    public ResponseEntity<Object> getUser(@Nonnull final Integer id) {
+        final ActiveUser user = userService.getUser(id);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(user);
     }

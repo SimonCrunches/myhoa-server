@@ -23,7 +23,6 @@ import org.technopolis.utils.CommonUtils;
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -68,7 +67,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 .milestone(LocalDate.parse(model.getMilestone(), CommonUtils.LOCALDATE))
                 .price(model.getPrice())
                 .contractor(model.getContractor())
-                .image_url(model.getImage_url()).build();
+                .imageUrl(model.getImageUrl()).build();
         initiativeRepository.save(initiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (addedInitiative == null) {
@@ -192,7 +191,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         }
         FavouriteInitiative favInit = favouriteInitiativeRepository.findByActiveUserAndInitiative(user, initiative).orElse(null);
         if (favInit != null) {
-            return new ResponseEntity<>("Favourite initiative already exists", HttpStatus.FOUND);
+            return ResponseEntity.ok(new MessageResponse("Favourite initiative already exists"));
         }
         favInit = FavouriteInitiative.builder()
                 .activeUser(user)
@@ -212,5 +211,25 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user).stream()
                 .map(favouriteInitiative -> initiativeRepository.findById(favouriteInitiative.getId()))
                 .collect(Collectors.toList()));
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<?> deleteFavourites(@Nonnull final String token,
+                                              @Nonnull final Integer id) {
+        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final FavouriteInitiative favInit = favouriteInitiativeRepository.findById(id).orElse(null);
+        if (favInit == null) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        favouriteInitiativeRepository.delete(favInit);
+        final FavouriteInitiative deletedFavInit = favouriteInitiativeRepository.findById(id).orElse(null);
+        if (deletedFavInit != null) {
+            return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Initiative successfully deleted!"));
     }
 }

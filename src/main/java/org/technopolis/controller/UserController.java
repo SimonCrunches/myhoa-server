@@ -26,8 +26,8 @@ public class UserController {
         return facade.getInitiatives();
     }
 
-    @GetMapping("/{username}")
-    public ResponseEntity<Object> getUser(@PathVariable final String username) {
-        return facade.getUser(username);
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getUser(@PathVariable final Integer id) {
+        return facade.getUser(id);
     }
 }

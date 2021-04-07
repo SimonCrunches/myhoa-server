@@ -41,7 +41,10 @@ public class ActiveUser implements UserDetails {
     private String email;
 
     @Column(name = "firebaseToken", nullable = false)
-    protected String firebaseToken;
+    private String firebaseToken;
+
+    @Column(name = "pictureUrl", nullable = false)
+    private String pictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "active_user_roles",

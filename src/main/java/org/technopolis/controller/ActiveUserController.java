@@ -66,4 +66,10 @@ public class ActiveUserController {
                                               @PathVariable final Integer id) {
         return facade.addFavourites(token.substring(7), id);
     }
+
+    @DeleteMapping(value = "/favourites/{id}")
+    public ResponseEntity<?> deleteFavourites(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                              @PathVariable final Integer id) {
+        return facade.deleteFavourites(token.substring(7), id);
+    }
 }

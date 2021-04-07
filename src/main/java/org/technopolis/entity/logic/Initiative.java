@@ -66,4 +66,8 @@ public class Initiative implements Serializable {
     @JsonBackReference
     @OneToMany(mappedBy = "initiative", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     protected Set<Task> tasks = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<FavouriteInitiative> favouriteUsers = new HashSet<>();
 }

@@ -8,12 +8,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
 import org.technopolis.controller.facade.ActiveUserFacade;
 import org.technopolis.data.actor.ActiveUserRepository;
+import org.technopolis.data.logic.FavouriteInitiativeRepository;
 import org.technopolis.data.logic.InitiativeRepository;
 import org.technopolis.dto.EditInitiativeDTO;
 import org.technopolis.dto.EditUserDTO;
 import org.technopolis.dto.InitiativeDTO;
 import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.entity.enums.Category;
+import org.technopolis.entity.logic.FavouriteInitiative;
 import org.technopolis.entity.logic.Initiative;
 import org.technopolis.response.MessageResponse;
 import org.technopolis.utils.CommonUtils;
@@ -27,14 +29,17 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
 
     private final ActiveUserRepository activeUserRepository;
     private final InitiativeRepository initiativeRepository;
+    private final FavouriteInitiativeRepository favouriteInitiativeRepository;
     private final JwtUtils jwtUtils;
 
     @Autowired
     public ActiveUserFacadeImpl(@Nonnull final ActiveUserRepository activeUserRepository,
                                 @Nonnull final InitiativeRepository initiativeRepository,
+                                @Nonnull final FavouriteInitiativeRepository favouriteInitiativeRepository,
                                 @Nonnull final JwtUtils jwtUtils) {
         this.activeUserRepository = activeUserRepository;
         this.initiativeRepository = initiativeRepository;
+        this.favouriteInitiativeRepository = favouriteInitiativeRepository;
         this.jwtUtils = jwtUtils;
     }
 
@@ -46,11 +51,11 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (activeUser == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final Initiative initiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
+        Initiative initiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (initiative != null) {
             return new ResponseEntity<>("Initiative already exists", HttpStatus.FOUND);
         }
-        final Initiative newInitiative = Initiative.builder()
+        initiative = Initiative.builder()
                 .category(Category.convertToEntityAttribute(model.getCategory()))
                 .title(model.getTitle())
                 .description(model.getDescription())
@@ -62,7 +67,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 .price(model.getPrice())
                 .contractor(model.getContractor())
                 .image_url(model.getImage_url()).build();
-        initiativeRepository.save(newInitiative);
+        initiativeRepository.save(initiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (addedInitiative == null) {
             return new ResponseEntity<>("Error when adding new initiative", HttpStatus.BAD_REQUEST);
@@ -70,6 +75,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         return ResponseEntity.ok(new MessageResponse("Initiative successfully added!"));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> editInitiative(@Nonnull final String token,
                                             @Nonnull final EditInitiativeDTO model,
@@ -115,6 +121,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 : ResponseEntity.ok(initiativeRepository.findByActiveUser(user));
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> editUser(@Nonnull final String token,
                                       @Nonnull final EditUserDTO model) {
@@ -149,6 +156,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 : ResponseEntity.ok(user);
     }
 
+    @Transactional
     @Override
     public ResponseEntity<?> deleteInitiative(@Nonnull final String token,
                                               @Nonnull final Integer id) {
@@ -166,5 +174,39 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
             return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(new MessageResponse("Initiative successfully deleted!"));
+    }
+
+    @Transactional
+    @Override
+    public ResponseEntity<?> addFavourites(@Nonnull final String token,
+                                           @Nonnull final Integer id) {
+        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final Initiative initiative = initiativeRepository.findById(id).orElse(null);
+        if (initiative == null) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        FavouriteInitiative favInit = favouriteInitiativeRepository.findByActiveUserAndInitiative(user, initiative).orElse(null);
+        if (favInit != null) {
+            return new ResponseEntity<>("Favourite initiative already exists", HttpStatus.FOUND);
+        }
+        favInit = FavouriteInitiative.builder()
+                .activeUser(user)
+                .initiative(initiative).build();
+        favouriteInitiativeRepository.save(favInit);
+        final FavouriteInitiative addedFavInit = favouriteInitiativeRepository.findByActiveUserAndInitiative(user, initiative).orElse(null);
+        if (addedFavInit == null) {
+            return new ResponseEntity<>("Error when adding new favourite initiative", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Favourite initiative successfully added!"));
+    }
+
+    @Override
+    public ResponseEntity<Object> getFavourites(@Nonnull final String token) {
+        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getUserNameFromJwtToken(token)).orElse(null);
+        return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
+                : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user));
     }
 }

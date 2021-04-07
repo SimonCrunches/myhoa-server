@@ -25,4 +25,9 @@ public interface ActiveUserFacade {
 
     ResponseEntity<?> deleteInitiative(@Nonnull final String token,
                                        @Nonnull final Integer id);
+
+    ResponseEntity<?> addFavourites(@Nonnull final String token,
+                                   @Nonnull final Integer id);
+
+    ResponseEntity<Object> getFavourites(@Nonnull final String token);
 }

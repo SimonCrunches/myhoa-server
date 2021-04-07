@@ -55,4 +55,15 @@ public class ActiveUserController {
                                               @PathVariable final Integer id) {
         return facade.deleteInitiative(token.substring(7), id);
     }
+
+    @GetMapping(value = "/favourites")
+    public ResponseEntity<Object> getFavourites(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
+        return facade.getFavourites(token.substring(7));
+    }
+
+    @PostMapping(value = "/favourites/{id}")
+    public ResponseEntity<?> addFavourites(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                              @PathVariable final Integer id) {
+        return facade.addFavourites(token.substring(7), id);
+    }
 }

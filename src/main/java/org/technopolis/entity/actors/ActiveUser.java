@@ -3,6 +3,7 @@ package org.technopolis.entity.actors;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.technopolis.entity.logic.FavouriteInitiative;
 import org.technopolis.entity.logic.Initiative;
 
 import javax.persistence.*;
@@ -50,7 +51,11 @@ public class ActiveUser implements UserDetails {
 
     @JsonBackReference
     @OneToMany(mappedBy = "activeUser", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    protected Set<Initiative> createdInitiatives = new HashSet<>();
+    private Set<Initiative> createdInitiatives = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "activeUser", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<FavouriteInitiative> favouriteInitiatives = new HashSet<>();
 
     @Override
     public Set<Role> getAuthorities() {

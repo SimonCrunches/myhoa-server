@@ -169,7 +169,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (initiative == null) {
             return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
         }
-        initiativeRepository.delete(initiative);
+        initiativeRepository.deleteById(initiative.getId());
         final Initiative deletedInitiative = initiativeRepository.findById(id).orElse(null);
         if (deletedInitiative != null) {
             return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);
@@ -225,7 +225,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (favInit == null) {
             return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
         }
-        favouriteInitiativeRepository.delete(favInit);
+        favouriteInitiativeRepository.deleteById(favInit.getId());
         final FavouriteInitiative deletedFavInit = favouriteInitiativeRepository.findById(id).orElse(null);
         if (deletedFavInit != null) {
             return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);

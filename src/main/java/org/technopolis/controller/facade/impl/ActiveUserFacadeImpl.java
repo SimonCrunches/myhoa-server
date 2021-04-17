@@ -143,6 +143,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
             final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             final ActiveUser userDetails = (ActiveUser) authentication.getPrincipal();
             userDetails.setUsername(model.getUsername());
+            user.setUsername(model.getUsername());
         }
         if (model.getEmail() != null) {
             user.setEmail(model.getEmail());

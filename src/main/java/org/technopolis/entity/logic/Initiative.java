@@ -44,7 +44,7 @@ public class Initiative implements Serializable {
     private Double longitude;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "active_user_id", nullable = false)
     private ActiveUser activeUser;
 
@@ -64,10 +64,10 @@ public class Initiative implements Serializable {
     private String imageUrl;
 
     @JsonBackReference
-    @OneToMany(mappedBy = "initiative", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     protected Set<Task> tasks = new HashSet<>();
 
     @JsonBackReference
-    @OneToMany(mappedBy = "initiative", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<FavouriteInitiative> favouriteUsers = new HashSet<>();
 }

@@ -3,6 +3,8 @@ package org.technopolis.controller.facade.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
@@ -12,7 +14,7 @@ import org.technopolis.data.logic.FavouriteInitiativeRepository;
 import org.technopolis.data.logic.InitiativeRepository;
 import org.technopolis.dto.EditInitiativeDTO;
 import org.technopolis.dto.EditUserDTO;
-import org.technopolis.dto.InitiativeDTO;
+import org.technopolis.dto.entities.InitiativeDTO;
 import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.entity.enums.Category;
 import org.technopolis.entity.logic.FavouriteInitiative;
@@ -26,6 +28,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class ActiveUserFacadeImpl implements ActiveUserFacade {
 
     private final ActiveUserRepository activeUserRepository;
@@ -44,7 +47,6 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         this.jwtUtils = jwtUtils;
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> addInitiative(@Nonnull final String token,
                                            @Nonnull final InitiativeDTO model) {
@@ -76,7 +78,6 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         return ResponseEntity.ok(new MessageResponse("Initiative successfully added!"));
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> editInitiative(@Nonnull final String token,
                                             @Nonnull final EditInitiativeDTO model,
@@ -107,6 +108,9 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (model.getContractor() != null) {
             initiative.setContractor(model.getContractor());
         }
+        if (model.getImageUrl() != null) {
+            initiative.setImageUrl(model.getImageUrl());
+        }
         initiativeRepository.save(initiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(activeUser, model.getTitle()).orElse(null);
         if (addedInitiative == null) {
@@ -122,7 +126,6 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 : ResponseEntity.ok(initiativeRepository.findByActiveUser(user));
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> editUser(@Nonnull final String token,
                                       @Nonnull final EditUserDTO model) {
@@ -137,7 +140,9 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
             user.setLastName(model.getLastName());
         }
         if (model.getUsername() != null) {
-            user.setUsername(model.getUsername());
+            final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            final ActiveUser userDetails = (ActiveUser) authentication.getPrincipal();
+            userDetails.setUsername(model.getUsername());
         }
         if (model.getEmail() != null) {
             user.setEmail(model.getEmail());
@@ -157,7 +162,6 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 : ResponseEntity.ok(user);
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> deleteInitiative(@Nonnull final String token,
                                               @Nonnull final Integer id) {
@@ -177,7 +181,6 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         return ResponseEntity.ok(new MessageResponse("Initiative successfully deleted!"));
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> addFavourites(@Nonnull final String token,
                                            @Nonnull final Integer id) {
@@ -213,7 +216,6 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 .collect(Collectors.toList()));
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> deleteFavourites(@Nonnull final String token,
                                               @Nonnull final Integer id) {

@@ -32,7 +32,7 @@ public class Task implements Serializable {
     private Integer remainingEstimate;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiative_id", nullable = false)
     private Initiative initiative;
 

@@ -19,6 +19,7 @@ import org.technopolis.service.shared.RegisterUserInit;
 import javax.annotation.Nonnull;
 
 @Service
+@Transactional
 public class UserFacadeImpl implements UserFacade {
 
     private final FirebaseService firebaseService;
@@ -37,7 +38,6 @@ public class UserFacadeImpl implements UserFacade {
         this.initiativeRepository = initiativeRepository;
     }
 
-    @Transactional
     @Override
     public ResponseEntity<?> authenticate(final String firebaseToken) {
         if (StringUtils.isBlank(firebaseToken)) {

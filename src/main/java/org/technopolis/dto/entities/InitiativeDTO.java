@@ -1,4 +1,4 @@
-package org.technopolis.dto;
+package org.technopolis.dto.entities;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

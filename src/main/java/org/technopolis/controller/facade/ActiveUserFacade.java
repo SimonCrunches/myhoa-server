@@ -3,7 +3,7 @@ package org.technopolis.controller.facade;
 import org.springframework.http.ResponseEntity;
 import org.technopolis.dto.EditInitiativeDTO;
 import org.technopolis.dto.EditUserDTO;
-import org.technopolis.dto.InitiativeDTO;
+import org.technopolis.dto.entities.InitiativeDTO;
 
 import javax.annotation.Nonnull;
 

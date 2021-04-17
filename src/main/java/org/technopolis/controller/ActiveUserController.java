@@ -8,7 +8,7 @@ import org.technopolis.configuration.security.SecurityConstants;
 import org.technopolis.controller.facade.ActiveUserFacade;
 import org.technopolis.dto.EditInitiativeDTO;
 import org.technopolis.dto.EditUserDTO;
-import org.technopolis.dto.InitiativeDTO;
+import org.technopolis.dto.entities.InitiativeDTO;
 
 import javax.validation.Valid;
 

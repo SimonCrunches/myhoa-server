@@ -24,6 +24,7 @@ import java.util.*;
 
 @Service
 @Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final ActiveUserRepository userDao;
@@ -50,7 +51,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
     @Secured(value = SecurityConfig.Roles.ROLE_ACTIVE_USER)
     public ActiveUser registerUser(@Nonnull final RegisterUserInit init) {
 

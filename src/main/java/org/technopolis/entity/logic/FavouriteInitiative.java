@@ -21,12 +21,12 @@ public class FavouriteInitiative implements Serializable {
     protected Integer id;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "active_user_id", nullable = false)
     private ActiveUser activeUser;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "initiative_id", nullable = false)
     private Initiative initiative;
 }

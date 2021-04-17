@@ -10,13 +10,20 @@ import org.technopolis.configuration.security.auth.firebase.FirebaseTokenHolder;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
 import org.technopolis.controller.facade.UserFacade;
 import org.technopolis.data.logic.InitiativeRepository;
+import org.technopolis.dto.entities.ActiveUserDTO;
+import org.technopolis.dto.entities.InitiativeDTO;
 import org.technopolis.entity.actors.ActiveUser;
+import org.technopolis.entity.enums.Category;
+import org.technopolis.entity.logic.Initiative;
 import org.technopolis.response.FirebaseResponse;
 import org.technopolis.service.FirebaseService;
 import org.technopolis.service.UserService;
 import org.technopolis.service.shared.RegisterUserInit;
+import org.technopolis.utils.CommonUtils;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional
@@ -48,7 +55,7 @@ public class UserFacadeImpl implements UserFacade {
                 tokenHolder.getEmail(),
                 tokenHolder.getPicture(),
                 tokenHolder.getUid()));
-        final String jwt = jwtUtils.generateJwtToken(user.getUsername());
+        final String jwt = jwtUtils.generateJwtToken(user.getPassword());
         return ResponseEntity.ok(new FirebaseResponse(jwt,
                 user.getUsername(),
                 user.getEmail(),
@@ -57,14 +64,18 @@ public class UserFacadeImpl implements UserFacade {
 
     @Override
     public ResponseEntity<Object> getInitiatives() {
-        return ResponseEntity.ok(initiativeRepository.findAll());
+        final List<InitiativeDTO> initiatives = new ArrayList<>();
+        for (final Initiative initiative : initiativeRepository.findAll()) {
+            initiatives.add(new InitiativeDTO(initiative));
+        }
+        return ResponseEntity.ok(initiatives);
     }
 
     @Override
     public ResponseEntity<Object> getUser(@Nonnull final Integer id) {
         final ActiveUser user = userService.getUser(id);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
-                : ResponseEntity.ok(user);
+                : ResponseEntity.ok(new ActiveUserDTO(user));
     }
 
 }

@@ -2,6 +2,7 @@ package org.technopolis.controller.facade;
 
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.http.ResponseEntity;
+import org.technopolis.dto.entities.ActiveUserDTO;
 
 import javax.annotation.Nonnull;
 

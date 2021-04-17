@@ -3,7 +3,10 @@ package org.technopolis.dto.entities;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.technopolis.entity.logic.Initiative;
+import org.technopolis.utils.CommonUtils;
 
+import javax.annotation.Nonnull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -43,5 +46,25 @@ public class InitiativeDTO {
 
     @JsonProperty("imageUrl")
     private String imageUrl;
+
+    @JsonProperty("activeUser")
+    private Integer activeUser;
+
+    @JsonProperty("creationDate")
+    private String creationDate;
+
+    public InitiativeDTO(@Nonnull final Initiative initiative) {
+        this.category = initiative.getCategory().getCategory();
+        this.contractor = initiative.getContractor();
+        this.description = initiative.getDescription();
+        this.imageUrl = initiative.getImageUrl();
+        this.latitude = initiative.getLatitude();
+        this.longitude = initiative.getLongitude();
+        this.milestone = initiative.getMilestone().format(CommonUtils.LOCALDATE);
+        this.price = initiative.getPrice();
+        this.title = initiative.getTitle();
+        this.activeUser = initiative.getActiveUser().getId();
+        this.creationDate = initiative.getCreationDate().format(CommonUtils.LOCALDATETIME);
+    }
 
 }

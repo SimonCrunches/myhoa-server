@@ -14,8 +14,8 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
-    public String generateJwtToken(@Nonnull final String username) {
-        return Jwts.builder().setSubject((username)).setIssuedAt(new Date())
+    public String generateJwtToken(@Nonnull final String password) {
+        return Jwts.builder().setSubject((password)).setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
                 .compact();

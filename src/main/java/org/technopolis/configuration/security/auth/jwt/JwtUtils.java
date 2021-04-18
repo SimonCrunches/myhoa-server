@@ -21,12 +21,8 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(@Nonnull final String token) {
+    public String getPasswordFromJwtToken(@Nonnull final String token) {
         return Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public Integer getIdFromJwtToken(@Nonnull final String token) {
-        return Integer.parseInt(Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getId());
     }
 
     public boolean validateJwtToken(@Nonnull final String authToken) {

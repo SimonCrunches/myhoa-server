@@ -19,4 +19,6 @@ public interface ActiveUserRepository extends BaseRepository<ActiveUser> {
     Optional<ActiveUser> findByEmail(@Nonnull final String email);
 
     Optional<ActiveUser> findByFirebaseToken(@Nonnull final String firebaseToken);
+
+    Optional<ActiveUser> findByPassword(@Nonnull final String password);
 }

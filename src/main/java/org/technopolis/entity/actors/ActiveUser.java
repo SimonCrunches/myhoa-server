@@ -2,13 +2,10 @@ package org.technopolis.entity.actors;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.technopolis.entity.logic.FavouriteInitiative;
 import org.technopolis.entity.logic.Initiative;
 
-import javax.annotation.Nonnull;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import java.util.HashSet;

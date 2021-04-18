@@ -11,8 +11,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.technopolis.configuration.security.SecurityConstants;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
 import org.technopolis.service.FirebaseService;
-import org.technopolis.service.UserService;
 import org.technopolis.service.exception.FirebaseTokenInvalidException;
+import org.technopolis.service.impl.UserServiceImpl;
 
 import javax.annotation.Nonnull;
 import javax.servlet.FilterChain;
@@ -26,7 +26,7 @@ public class FirebaseFilter extends OncePerRequestFilter {
     @Autowired
     private FirebaseService firebaseService;
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
     @Autowired
     private JwtUtils jwtUtils;
 
@@ -40,9 +40,9 @@ public class FirebaseFilter extends OncePerRequestFilter {
             try {
                 final String jwt = jwtUtils.parseJwt(request);
                 if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                    final String username = jwtUtils.getUserNameFromJwtToken(jwt);
+                    final String password = jwtUtils.getPasswordFromJwtToken(jwt);
 
-                    final UserDetails userDetails = userService.loadUserByUsername(username);
+                    final UserDetails userDetails = userService.loadUserByPassword(password);
                     final UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -40,9 +40,9 @@ public class FirebaseFilter extends OncePerRequestFilter {
             try {
                 final String jwt = jwtUtils.parseJwt(request);
                 if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                    final String password = jwtUtils.getPasswordFromJwtToken(jwt);
+                    final String token = jwtUtils.getFirebaseTokenFromJwtToken(jwt);
 
-                    final UserDetails userDetails = userService.loadUserByPassword(password);
+                    final UserDetails userDetails = userService.loadUserByFirebaseToken(token);
                     final UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

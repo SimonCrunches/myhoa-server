@@ -50,8 +50,8 @@ public class UserServiceImpl implements UserService {
         return new User(userDetails.getUsername(), userDetails.getPassword(), grantedAuthorities);
     }
 
-    public UserDetails loadUserByPassword(@Nonnull final String password) throws UsernameNotFoundException {
-        final ActiveUser userDetails = userDao.findByPassword(password).orElse(null);
+    public UserDetails loadUserByFirebaseToken(@Nonnull final String token) throws UsernameNotFoundException {
+        final ActiveUser userDetails = userDao.findByFirebaseToken(token).orElse(null);
         if (userDetails == null)
             return null;
 

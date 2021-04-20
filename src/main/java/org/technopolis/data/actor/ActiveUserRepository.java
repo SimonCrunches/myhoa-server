@@ -10,15 +10,8 @@ import java.util.Optional;
 @Repository
 public interface ActiveUserRepository extends BaseRepository<ActiveUser> {
 
-    Optional<ActiveUser> findByFirstName(@Nonnull final String firstName);
-
-    Optional<ActiveUser> findByLastName(@Nonnull final String lastName);
-
     Optional<ActiveUser> findByUsername(@Nonnull final String login);
-
-    Optional<ActiveUser> findByEmail(@Nonnull final String email);
 
     Optional<ActiveUser> findByFirebaseToken(@Nonnull final String firebaseToken);
 
-    Optional<ActiveUser> findByPassword(@Nonnull final String password);
 }

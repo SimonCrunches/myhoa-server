@@ -51,7 +51,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> addInitiative(@Nonnull final String token,
                                            @Nonnull final InitiativeDTO model) {
-        final ActiveUser activeUser = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser activeUser = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (activeUser == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -83,7 +83,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     public ResponseEntity<?> editInitiative(@Nonnull final String token,
                                             @Nonnull final EditInitiativeDTO model,
                                             @Nonnull final Integer id) {
-        final ActiveUser activeUser = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser activeUser = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (activeUser == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -122,7 +122,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
 
     @Override
     public ResponseEntity<Object> getInitiatives(@Nonnull final String token) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -136,7 +136,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> editUser(@Nonnull final String token,
                                       @Nonnull final EditUserDTO model) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -162,7 +162,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
 
     @Override
     public ResponseEntity<Object> getUser(@Nonnull final String token) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(new ActiveUserDTO(user));
     }
@@ -170,7 +170,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> deleteInitiative(@Nonnull final String token,
                                               @Nonnull final Integer id) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -189,7 +189,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> addFavourites(@Nonnull final String token,
                                            @Nonnull final Integer id) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
@@ -214,7 +214,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
 
     @Override
     public ResponseEntity<Object> getFavourites(@Nonnull final String token) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user).stream()
                 .map(favouriteInitiative -> new InitiativeDTO(initiativeRepository.findById(favouriteInitiative.getId()).get()))
@@ -224,7 +224,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> deleteFavourites(@Nonnull final String token,
                                               @Nonnull final Integer id) {
-        final ActiveUser user = activeUserRepository.findByUsername(jwtUtils.getPasswordFromJwtToken(token)).orElse(null);
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }

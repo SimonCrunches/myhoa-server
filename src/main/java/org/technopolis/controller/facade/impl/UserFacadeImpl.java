@@ -55,7 +55,7 @@ public class UserFacadeImpl implements UserFacade {
                 tokenHolder.getEmail(),
                 tokenHolder.getPicture(),
                 tokenHolder.getUid()));
-        final String jwt = jwtUtils.generateJwtToken(user.getPassword());
+        final String jwt = jwtUtils.generateJwtToken(user.getFirebaseToken());
         return ResponseEntity.ok(new FirebaseResponse(jwt,
                 user.getUsername(),
                 user.getEmail(),

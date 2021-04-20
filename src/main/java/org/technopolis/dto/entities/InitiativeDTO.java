@@ -15,6 +15,10 @@ import javax.validation.constraints.NotNull;
 public class InitiativeDTO {
 
     @NotBlank
+    @JsonProperty("id")
+    private Integer id;
+
+    @NotBlank
     @JsonProperty("category")
     private String category;
 
@@ -54,6 +58,7 @@ public class InitiativeDTO {
     private String creationDate;
 
     public InitiativeDTO(@Nonnull final Initiative initiative) {
+        this.id = initiative.getId();
         this.category = initiative.getCategory().getCategory();
         this.contractor = initiative.getContractor();
         this.description = initiative.getDescription();

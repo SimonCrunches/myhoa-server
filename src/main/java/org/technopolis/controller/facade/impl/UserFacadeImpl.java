@@ -13,13 +13,11 @@ import org.technopolis.data.logic.InitiativeRepository;
 import org.technopolis.dto.entities.ActiveUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
 import org.technopolis.entity.actors.ActiveUser;
-import org.technopolis.entity.enums.Category;
 import org.technopolis.entity.logic.Initiative;
 import org.technopolis.response.FirebaseResponse;
 import org.technopolis.service.FirebaseService;
 import org.technopolis.service.UserService;
 import org.technopolis.service.shared.RegisterUserInit;
-import org.technopolis.utils.CommonUtils;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

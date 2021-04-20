@@ -7,44 +7,35 @@ import org.technopolis.entity.logic.Initiative;
 import org.technopolis.utils.CommonUtils;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 public class InitiativeDTO {
 
-    @NotBlank
     @JsonProperty("id")
     private Integer id;
 
-    @NotBlank
     @JsonProperty("category")
     private String category;
 
-    @NotBlank
     @JsonProperty("title")
     private String title;
 
     @JsonProperty("description")
     private String description;
 
-    @NotNull
     @JsonProperty("latitude")
     private Double latitude;
 
-    @NotNull
     @JsonProperty("longitude")
     private Double longitude;
 
-    @NotBlank
     @JsonProperty("milestone")
     private String milestone;
 
     @JsonProperty("price")
     private Integer price;
 
-    @NotNull
     @JsonProperty("contractor")
     private Boolean contractor;
 

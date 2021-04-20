@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import org.technopolis.entity.actors.ActiveUser;
 
 import javax.annotation.Nonnull;
-import javax.validation.constraints.NotBlank;
 
 @Data
 @NoArgsConstructor
@@ -18,23 +17,18 @@ public class ActiveUserDTO {
     @JsonProperty("last_name")
     private String lastName;
 
-    @NotBlank
     @JsonProperty("username")
     private String username;
 
-    @NotBlank
     @JsonProperty("password")
     private String password;
 
-    @NotBlank
     @JsonProperty("email")
     private String email;
 
-    @NotBlank
     @JsonProperty("firebaseToken")
     private String firebaseToken;
 
-    @NotBlank
     @JsonProperty("pictureUrl")
     private String pictureUrl;
 

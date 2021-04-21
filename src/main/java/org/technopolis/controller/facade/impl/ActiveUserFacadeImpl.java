@@ -10,8 +10,10 @@ import org.technopolis.controller.facade.ActiveUserFacade;
 import org.technopolis.data.actor.ActiveUserRepository;
 import org.technopolis.data.logic.FavouriteInitiativeRepository;
 import org.technopolis.data.logic.InitiativeRepository;
-import org.technopolis.dto.EditInitiativeDTO;
-import org.technopolis.dto.EditUserDTO;
+import org.technopolis.dto.entities.FavouriteInitiativeDTO;
+import org.technopolis.dto.entities.OwnerInitiativeDTO;
+import org.technopolis.dto.logic.EditInitiativeDTO;
+import org.technopolis.dto.logic.EditUserDTO;
 import org.technopolis.dto.entities.ActiveUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
 import org.technopolis.entity.actors.ActiveUser;
@@ -126,9 +128,9 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final List<InitiativeDTO> initiatives = new ArrayList<>();
+        final List<OwnerInitiativeDTO> initiatives = new ArrayList<>();
         for (final Initiative initiative : initiativeRepository.findByActiveUser(user)) {
-            initiatives.add(new InitiativeDTO(initiative));
+            initiatives.add(new OwnerInitiativeDTO(initiative, true));
         }
         return ResponseEntity.ok(initiatives);
     }
@@ -217,7 +219,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user).stream()
-                .map(favouriteInitiative -> new InitiativeDTO(initiativeRepository.findById(favouriteInitiative.getId()).get()))
+                .map(favouriteInitiative -> new FavouriteInitiativeDTO(initiativeRepository.findById(favouriteInitiative.getId()).get(), true))
                 .collect(Collectors.toList()));
     }
 

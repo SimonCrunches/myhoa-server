@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.technopolis.configuration.security.SecurityConstants;
 import org.technopolis.controller.facade.UserFacade;
+import org.technopolis.dto.entities.InitiativeDTO;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -22,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping("/initiatives")
-    public ResponseEntity<Object> getInitiatives() {
+    public ResponseEntity<List<InitiativeDTO>> getInitiatives() {
         return facade.getInitiatives();
     }
 

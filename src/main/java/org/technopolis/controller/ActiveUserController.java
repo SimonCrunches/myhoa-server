@@ -6,8 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.technopolis.configuration.security.SecurityConstants;
 import org.technopolis.controller.facade.ActiveUserFacade;
-import org.technopolis.dto.EditInitiativeDTO;
-import org.technopolis.dto.EditUserDTO;
+import org.technopolis.dto.logic.EditInitiativeDTO;
+import org.technopolis.dto.logic.EditUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
 
 import javax.validation.Valid;
@@ -35,7 +35,7 @@ public class ActiveUserController {
     }
 
     @GetMapping(value = "/initiatives")
-    public ResponseEntity<?> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
+    public ResponseEntity<Object> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
         return facade.getInitiatives(token.substring(7));
     }
 

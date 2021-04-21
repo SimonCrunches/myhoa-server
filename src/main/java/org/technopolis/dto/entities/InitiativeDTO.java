@@ -13,40 +13,40 @@ import javax.annotation.Nonnull;
 public class InitiativeDTO {
 
     @JsonProperty("id")
-    private Integer id;
+    protected Integer id;
 
     @JsonProperty("category")
-    private String category;
+    protected String category;
 
     @JsonProperty("title")
-    private String title;
+    protected String title;
 
     @JsonProperty("description")
-    private String description;
+    protected String description;
 
     @JsonProperty("latitude")
-    private Double latitude;
+    protected Double latitude;
 
     @JsonProperty("longitude")
-    private Double longitude;
+    protected Double longitude;
 
     @JsonProperty("milestone")
-    private String milestone;
+    protected String milestone;
 
     @JsonProperty("price")
-    private Integer price;
+    protected Integer price;
 
     @JsonProperty("contractor")
-    private Boolean contractor;
+    protected Boolean contractor;
 
     @JsonProperty("imageUrl")
-    private String imageUrl;
+    protected String imageUrl;
 
     @JsonProperty("activeUser")
-    private Integer activeUser;
+    protected Integer activeUser;
 
     @JsonProperty("creationDate")
-    private String creationDate;
+    protected String creationDate;
 
     public InitiativeDTO(@Nonnull final Initiative initiative) {
         this.id = initiative.getId();

@@ -7,15 +7,24 @@ import org.technopolis.entity.logic.Initiative;
 import javax.annotation.Nonnull;
 
 @NoArgsConstructor
-public class FavouriteInitiativeDTO extends InitiativeDTO {
+public class OwnerFavouriteInitiativeDTO extends InitiativeDTO {
+
+    @JsonProperty("isMine")
+    private Boolean isMine;
 
     @JsonProperty("isFavourite")
     private Boolean isFavourite;
 
-    public FavouriteInitiativeDTO(@Nonnull final Initiative initiative,
-                                  @Nonnull final Boolean isFavourite) {
+    public OwnerFavouriteInitiativeDTO(@Nonnull final Initiative initiative,
+                                       @Nonnull final Boolean isMine,
+                                       @Nonnull final Boolean isFavourite) {
         super(initiative);
+        this.isMine = isMine;
         this.isFavourite = isFavourite;
+    }
+
+    public Boolean getMine() {
+        return isMine;
     }
 
     public Boolean getFavourite() {

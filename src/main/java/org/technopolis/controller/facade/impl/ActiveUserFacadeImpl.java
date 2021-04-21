@@ -10,8 +10,7 @@ import org.technopolis.controller.facade.ActiveUserFacade;
 import org.technopolis.data.actor.ActiveUserRepository;
 import org.technopolis.data.logic.FavouriteInitiativeRepository;
 import org.technopolis.data.logic.InitiativeRepository;
-import org.technopolis.dto.entities.FavouriteInitiativeDTO;
-import org.technopolis.dto.entities.OwnerInitiativeDTO;
+import org.technopolis.dto.entities.OwnerFavouriteInitiativeDTO;
 import org.technopolis.dto.logic.EditInitiativeDTO;
 import org.technopolis.dto.logic.EditUserDTO;
 import org.technopolis.dto.entities.ActiveUserDTO;
@@ -128,9 +127,9 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final List<OwnerInitiativeDTO> initiatives = new ArrayList<>();
+        final List<OwnerFavouriteInitiativeDTO> initiatives = new ArrayList<>();
         for (final Initiative initiative : initiativeRepository.findByActiveUser(user)) {
-            initiatives.add(new OwnerInitiativeDTO(initiative, true));
+            initiatives.add(new OwnerFavouriteInitiativeDTO(initiative, true, false));
         }
         return ResponseEntity.ok(initiatives);
     }
@@ -219,7 +218,8 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(favouriteInitiativeRepository.findByActiveUser(user).stream()
-                .map(favouriteInitiative -> new FavouriteInitiativeDTO(initiativeRepository.findById(favouriteInitiative.getId()).get(), true))
+                .map(favouriteInitiative ->
+                        new OwnerFavouriteInitiativeDTO(initiativeRepository.findById(favouriteInitiative.getId()).get(), false, true))
                 .collect(Collectors.toList()));
     }
 

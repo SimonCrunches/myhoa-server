@@ -1,14 +1,11 @@
 package org.technopolis.controller.facade;
 
 import org.springframework.http.ResponseEntity;
-import org.technopolis.dto.entities.FavouriteInitiativeDTO;
-import org.technopolis.dto.entities.OwnerInitiativeDTO;
 import org.technopolis.dto.logic.EditInitiativeDTO;
 import org.technopolis.dto.logic.EditUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public interface ActiveUserFacade {
 

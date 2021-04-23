@@ -34,10 +34,10 @@ public class ActiveUserController {
         return facade.editInitiative(token.substring(7), model, id);
     }
 
-    @GetMapping(value = "/initiatives")
+    /*@GetMapping(value = "/initiatives")
     public ResponseEntity<Object> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
         return facade.getInitiatives(token.substring(7));
-    }
+    }*/
 
     @GetMapping(value = "/profile")
     public ResponseEntity<Object> getUser(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {

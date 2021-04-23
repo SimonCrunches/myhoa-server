@@ -12,7 +12,7 @@ public interface UserFacade {
 
     ResponseEntity<?> authenticate(final String firebaseToken) throws FirebaseAuthException;
 
-    ResponseEntity<List<InitiativeDTO>> getInitiatives();
+    ResponseEntity<Object> getInitiatives();
 
     ResponseEntity<Object> getUser(@Nonnull final Integer id);
 }

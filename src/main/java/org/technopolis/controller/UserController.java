@@ -3,15 +3,12 @@ package org.technopolis.controller;
 import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.technopolis.configuration.security.SecurityConstants;
 import org.technopolis.controller.facade.ActiveUserFacade;
 import org.technopolis.controller.facade.UserFacade;
-import org.technopolis.dto.entities.InitiativeDTO;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -34,15 +31,11 @@ public class UserController {
         return userFacade.authenticate(firebaseToken);
     }
 
-    @GetMapping(value = "/initiatives", params = "!token")
-    public ResponseEntity<List<InitiativeDTO>> getInitiatives() {
-        return userFacade.getInitiatives();
-    }
-
-    @PreAuthorize("hasAnyRole('ROLE_ACTIVE_USER', 'ROLE_EXPERT')")
-    @GetMapping(value = "/initiatives", params = "token")
-    public ResponseEntity<Object> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
-        return activeUserFacade.getInitiatives(token.substring(7));
+    @GetMapping(value = "/initiatives")
+    public ResponseEntity<Object> getInitiatives(
+            @RequestHeader(required = false, value = SecurityConstants.HEADER_STRING) String token
+    ) {
+        return token == null ? userFacade.getInitiatives() : activeUserFacade.getInitiatives(token.substring(7));
     }
 
     @GetMapping("/{id}")

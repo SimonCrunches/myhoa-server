@@ -61,7 +61,7 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
-    public ResponseEntity<List<InitiativeDTO>> getInitiatives() {
+    public ResponseEntity<Object> getInitiatives() {
         final List<InitiativeDTO> initiatives = new ArrayList<>();
         for (final Initiative initiative : initiativeRepository.findAll()) {
             initiatives.add(new InitiativeDTO(initiative));

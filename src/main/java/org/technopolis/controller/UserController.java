@@ -34,13 +34,13 @@ public class UserController {
         return userFacade.authenticate(firebaseToken);
     }
 
-    @GetMapping("/initiatives")
+    @GetMapping(value = "/initiatives", params = "!token")
     public ResponseEntity<List<InitiativeDTO>> getInitiatives() {
         return userFacade.getInitiatives();
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ACTIVE_USER', 'ROLE_EXPERT')")
-    @GetMapping(value = "/initiatives")
+    @GetMapping(value = "/initiatives", params = "token")
     public ResponseEntity<Object> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
         return activeUserFacade.getInitiatives(token.substring(7));
     }

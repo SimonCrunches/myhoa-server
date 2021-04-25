@@ -14,19 +14,15 @@ import java.util.Date;
 @Slf4j
 public class JwtUtils {
 
-    public String generateJwtToken(@Nonnull final String username) {
-        return Jwts.builder().setSubject((username)).setIssuedAt(new Date())
+    public String generateJwtToken(@Nonnull final String token) {
+        return Jwts.builder().setSubject((token)).setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + SecurityConstants.EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
                 .compact();
     }
 
-    public String getUserNameFromJwtToken(@Nonnull final String token) {
+    public String getFirebaseTokenFromJwtToken(@Nonnull final String token) {
         return Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public Integer getIdFromJwtToken(@Nonnull final String token) {
-        return Integer.parseInt(Jwts.parser().setSigningKey(SecurityConstants.SECRET).parseClaimsJws(token).getBody().getId());
     }
 
     public boolean validateJwtToken(@Nonnull final String authToken) {

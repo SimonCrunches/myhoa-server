@@ -39,6 +39,10 @@ public class FirebaseTokenHolder {
         return token.getClaims();
     }
 
+    public String getPicture() {
+        return token.getPicture();
+    }
+
     /*public String getGoogleId() {
         return ((ArrayList<String>) ((ArrayMap) ((ArrayMap) token.getClaims().get("firebase"))
                 .get("identities")).get("google.com")).get(0);

@@ -10,4 +10,6 @@ public interface UserService extends UserDetailsService {
 
     ActiveUser registerUser(@Nonnull final RegisterUserInit init);
 
+    ActiveUser getUser(@Nonnull final Integer id);
+
 }

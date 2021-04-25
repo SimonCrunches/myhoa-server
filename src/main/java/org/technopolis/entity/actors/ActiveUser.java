@@ -1,11 +1,9 @@
 package org.technopolis.entity.actors;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.technopolis.entity.logic.FavouriteInitiative;
 import org.technopolis.entity.logic.Initiative;
 
 import javax.persistence.*;
@@ -18,6 +16,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "active_user")
 public class ActiveUser implements UserDetails {
 
@@ -42,17 +41,24 @@ public class ActiveUser implements UserDetails {
     private String email;
 
     @Column(name = "firebaseToken", nullable = false)
-    protected String firebaseToken;
+    private String firebaseToken;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Column(name = "pictureUrl", nullable = false)
+    private String pictureUrl;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "active_user_roles",
             joinColumns = @JoinColumn(name = "active_user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> authorities = new HashSet<>();
 
     @JsonBackReference
-    @OneToMany(mappedBy = "activeUser", fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    protected Set<Initiative> createdInitiatives = new HashSet<>();
+    @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Initiative> createdInitiatives = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<FavouriteInitiative> favouriteInitiatives = new HashSet<>();
 
     @Override
     public Set<Role> getAuthorities() {

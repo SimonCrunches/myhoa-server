@@ -8,5 +8,6 @@ import lombok.Data;
 public class RegisterUserInit {
     private final String userName;
     private final String email;
+    private final String picture;
     private final String token;
 }

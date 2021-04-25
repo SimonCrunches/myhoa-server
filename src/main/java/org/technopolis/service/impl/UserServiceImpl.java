@@ -24,6 +24,7 @@ import java.util.*;
 
 @Service
 @Slf4j
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final ActiveUserRepository userDao;
@@ -49,22 +50,35 @@ public class UserServiceImpl implements UserService {
         return new User(userDetails.getUsername(), userDetails.getPassword(), grantedAuthorities);
     }
 
+    public UserDetails loadUserByFirebaseToken(@Nonnull final String token) throws UsernameNotFoundException {
+        final ActiveUser userDetails = userDao.findByFirebaseToken(token).orElse(null);
+        if (userDetails == null)
+            return null;
+
+        final Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
+        for (final GrantedAuthority role : userDetails.getAuthorities()) {
+            grantedAuthorities.add(new SimpleGrantedAuthority(role.getAuthority()));
+        }
+
+        return new User(userDetails.getUsername(), userDetails.getPassword(), grantedAuthorities);
+    }
+
     @Override
-    @Transactional
     @Secured(value = SecurityConfig.Roles.ROLE_ACTIVE_USER)
     public ActiveUser registerUser(@Nonnull final RegisterUserInit init) {
 
         final ActiveUser userLoaded = userDao.findByUsername(init.getUserName()).orElse(null);
 
         if (userLoaded == null) {
-            ActiveUser userEntity = new ActiveUser();
-            userEntity.setUsername(init.getUserName());
-            userEntity.setEmail(init.getEmail());
-            userEntity.setFirebaseToken(init.getToken());
-            userEntity.setFirstName(init.getUserName());
-            userEntity.setLastName(init.getUserName());
-            userEntity.setAuthorities(getActiveUserRoles());
-            userEntity.setPassword(UUID.randomUUID().toString());
+            ActiveUser userEntity = ActiveUser.builder()
+                    .username(init.getUserName())
+                    .email(init.getEmail())
+                    .firebaseToken(init.getToken())
+                    .pictureUrl(init.getPicture())
+                    .firstName(init.getUserName())
+                    .lastName(init.getUserName())
+                    .authorities(getActiveUserRoles())
+                    .password(UUID.randomUUID().toString()).build();
             userDao.save(userEntity);
             log.info("registerUser -> user created");
             return userDao.findByUsername(init.getUserName()).get();
@@ -74,26 +88,14 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public ActiveUser getUser(@Nonnull final Integer id) {
+        return userDao.findById(id).orElse(null);
+    }
+
+
     @PostConstruct
     public void init() {
-
-        /*if (userDao.count() == 0) {
-            UserEntity adminEntity = new UserEntity();
-            adminEntity.setUsername("admin");
-            adminEntity.setPassword("admin");
-            adminEntity.setEmail("savic.prvoslav@gmail.com");
-
-            adminEntity.setAuthorities(getAdminRoles());
-            userDao.save(adminEntity);
-
-            UserEntity userEntity = new UserEntity();
-            userEntity.setUsername("user1");
-            userEntity.setPassword("user1");
-            userEntity.setEmail("savic.prvoslav@gmail.com");
-            userEntity.setAuthorities(getUserRoles());
-
-            userDao.save(userEntity);
-        }*/
     }
 
     private Set<Role> getExpertRoles() {

@@ -1,22 +1,25 @@
 package org.technopolis.entity.logic;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.technopolis.entity.actors.ActiveUser;
+import org.technopolis.entity.enums.Category;
+import org.technopolis.entity.enums.CategoryConverter;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "initiative")
 public class Initiative implements Serializable {
 
@@ -41,7 +44,7 @@ public class Initiative implements Serializable {
     private Double longitude;
 
     @JsonManagedReference
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "active_user_id", nullable = false)
     private ActiveUser activeUser;
 
@@ -56,4 +59,15 @@ public class Initiative implements Serializable {
 
     @Column(name = "contractor")
     private Boolean contractor;
+
+    @Column(name = "imageUrl")
+    private String imageUrl;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    protected Set<Task> tasks = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<FavouriteInitiative> favouriteUsers = new HashSet<>();
 }

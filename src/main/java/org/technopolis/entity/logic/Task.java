@@ -20,7 +20,7 @@ public class Task implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    private Integer id;
 
     @Column(name = "originalEstimate", nullable = false)
     private Integer originalEstimate;

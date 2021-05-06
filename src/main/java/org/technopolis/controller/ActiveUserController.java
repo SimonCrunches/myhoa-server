@@ -34,11 +34,6 @@ public class ActiveUserController {
         return facade.editInitiative(token.substring(7), model, id);
     }
 
-    /*@GetMapping(value = "/initiatives")
-    public ResponseEntity<Object> getInitiatives(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
-        return facade.getInitiatives(token.substring(7));
-    }*/
-
     @GetMapping(value = "/profile")
     public ResponseEntity<Object> getUser(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token) {
         return facade.getUser(token.substring(7));
@@ -71,5 +66,11 @@ public class ActiveUserController {
     public ResponseEntity<?> deleteFavourites(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
                                               @PathVariable final Integer id) {
         return facade.deleteFavourites(token.substring(7), id);
+    }
+
+    @PostMapping(value = "/report/{id}")
+    public ResponseEntity<?> reportInitiative(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                              @PathVariable final Integer id) {
+        return facade.reportInitiative(token.substring(7), id);
     }
 }

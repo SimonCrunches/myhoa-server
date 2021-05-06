@@ -36,6 +36,9 @@ public class InitiativeDTO {
     @JsonProperty("price")
     protected Integer price;
 
+    @JsonProperty("currentFunds")
+    protected Integer currentFunds;
+
     @JsonProperty("contractor")
     protected Boolean contractor;
 
@@ -48,7 +51,11 @@ public class InitiativeDTO {
     @JsonProperty("creationDate")
     protected String creationDate;
 
-    public InitiativeDTO(@Nonnull final Initiative initiative) {
+    @JsonProperty("reports")
+    protected Integer reports;
+
+    public InitiativeDTO(@Nonnull final Initiative initiative,
+                         @Nonnull final Integer currentFunds) {
         this.id = initiative.getId();
         this.category = initiative.getCategory().getCategory();
         this.contractor = initiative.getContractor();
@@ -61,6 +68,8 @@ public class InitiativeDTO {
         this.title = initiative.getTitle();
         this.activeUser = initiative.getActiveUser().getId();
         this.creationDate = initiative.getCreationDate().format(CommonUtils.LOCALDATETIME);
+        this.currentFunds = currentFunds;
+        this.reports = initiative.getReports();
     }
 
 }

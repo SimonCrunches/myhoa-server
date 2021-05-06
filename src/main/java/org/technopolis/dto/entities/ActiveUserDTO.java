@@ -11,6 +11,9 @@ import javax.annotation.Nonnull;
 @NoArgsConstructor
 public class ActiveUserDTO {
 
+    @JsonProperty("id")
+    private Integer id;
+
     @JsonProperty("first_name")
     private String firstName;
 
@@ -33,6 +36,7 @@ public class ActiveUserDTO {
     private String pictureUrl;
 
     public ActiveUserDTO(@Nonnull final ActiveUser user) {
+        this.id = user.getId();
         this.email = user.getEmail();
         this.firebaseToken = user.getFirebaseToken();
         this.firstName = user.getFirstName();

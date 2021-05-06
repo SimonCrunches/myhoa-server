@@ -9,12 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 import org.technopolis.configuration.security.auth.firebase.FirebaseTokenHolder;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
 import org.technopolis.controller.facade.UserFacade;
+import org.technopolis.data.actor.ActiveUserRepository;
 import org.technopolis.data.logic.InitiativeRepository;
+import org.technopolis.data.logic.PaymentRepository;
 import org.technopolis.dto.entities.ActiveUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
+import org.technopolis.dto.logic.PaymentDTO;
 import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.entity.logic.Initiative;
+import org.technopolis.entity.logic.Payment;
 import org.technopolis.response.FirebaseResponse;
+import org.technopolis.response.MessageResponse;
 import org.technopolis.service.FirebaseService;
 import org.technopolis.service.UserService;
 import org.technopolis.service.shared.RegisterUserInit;
@@ -30,17 +35,23 @@ public class UserFacadeImpl implements UserFacade {
     private final FirebaseService firebaseService;
     private final UserService userService;
     private final JwtUtils jwtUtils;
+    private final ActiveUserRepository activeUserRepository;
     private final InitiativeRepository initiativeRepository;
+    private final PaymentRepository paymentRepository;
 
     @Autowired
     public UserFacadeImpl(@Nonnull final FirebaseService firebaseService,
                           @Nonnull final UserService userService,
                           @Nonnull final JwtUtils jwtUtils,
-                          @Nonnull final InitiativeRepository initiativeRepository) {
+                          @Nonnull final ActiveUserRepository activeUserRepository,
+                          @Nonnull final InitiativeRepository initiativeRepository,
+                          @Nonnull final PaymentRepository paymentRepository) {
         this.firebaseService = firebaseService;
         this.userService = userService;
         this.jwtUtils = jwtUtils;
+        this.activeUserRepository = activeUserRepository;
         this.initiativeRepository = initiativeRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @Override
@@ -61,12 +72,35 @@ public class UserFacadeImpl implements UserFacade {
     }
 
     @Override
+    public ResponseEntity<?> pay(@Nonnull final PaymentDTO paymentDTO) {
+        if (!initiativeRepository.existsById(paymentDTO.getInitiativeId())) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.FOUND);
+        }
+        final Payment payment = new Payment(initiativeRepository.findById(paymentDTO.getInitiativeId()).get(),
+                paymentDTO.getUserId() == null ? null : activeUserRepository.findById(paymentDTO.getUserId()).get(),
+                paymentDTO.getPayment());
+        paymentRepository.save(payment);
+        return ResponseEntity.ok(new MessageResponse("Payment successfully added!"));
+    }
+
+    @Override
     public ResponseEntity<Object> getInitiatives() {
         final List<InitiativeDTO> initiatives = new ArrayList<>();
-        for (final Initiative initiative : initiativeRepository.findAll()) {
-            initiatives.add(new InitiativeDTO(initiative));
+        for (final Initiative initiative : initiativeRepository.findByTrash(false)) {
+            initiatives.add(new InitiativeDTO(initiative,
+                    paymentRepository.findSumPaymentsByInitiative(initiative.getId()).orElse(0)));
         }
         return ResponseEntity.ok(initiatives);
+    }
+
+    @Override
+    public ResponseEntity<Object> getSponsors(@Nonnull final Integer id) {
+        if (!initiativeRepository.existsById(id)) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.FOUND);
+        }
+        final List<Integer> sponsors = paymentRepository.findActiveUsersByInitiative(id);
+        return ResponseEntity.ok(sponsors.stream().map(userId ->
+                new ActiveUserDTO(activeUserRepository.findById(userId).get())));
     }
 
     @Override

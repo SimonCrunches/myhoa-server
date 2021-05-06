@@ -11,15 +11,14 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: ${DATABASE_URL}
 
-    tomcat:
-      test-on-borrow: true
-      test-while-idle: true
-      time-between-eviction-runs-millis: 60000
-      min-evictable-idle-time-millis: 30000
-      validation-query: SELECT 1
-      max-active: 15
-      max-idle: 10
-      max-wait: 8000
+    hikari:
+      auto-commit: true
+      connection-timeout: 20000
+      minimum-idle: 10
+      maximum-pool-size: 20
+      idle-timeout: 5000
+      max-lifetime: 1000
+      connection-init-sql: "SET application_name = 'PostgreSQL JDBC Driver';"
 
   jpa:
     database: postgresql

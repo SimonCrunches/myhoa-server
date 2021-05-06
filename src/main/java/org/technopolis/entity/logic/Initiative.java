@@ -25,7 +25,7 @@ public class Initiative implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    private Integer id;
 
     @Convert(converter = CategoryConverter.class)
     @Column(name = "category", nullable = false)
@@ -34,6 +34,7 @@ public class Initiative implements Serializable {
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Lob
     @Column(name = "description")
     private String description;
 
@@ -60,6 +61,12 @@ public class Initiative implements Serializable {
     @Column(name = "contractor")
     private Boolean contractor;
 
+    @Column(name = "trash")
+    private Boolean trash;
+
+    @Column(name = "reports")
+    private Integer reports;
+
     @Column(name = "imageUrl")
     private String imageUrl;
 
@@ -70,4 +77,12 @@ public class Initiative implements Serializable {
     @JsonBackReference
     @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<FavouriteInitiative> favouriteUsers = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    protected Set<Payment> payments = new HashSet<>();
+
+    public void incrementReports() {
+        this.reports++;
+    }
 }

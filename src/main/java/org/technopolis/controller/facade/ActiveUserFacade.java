@@ -33,4 +33,7 @@ public interface ActiveUserFacade {
 
     ResponseEntity<?> deleteFavourites(@Nonnull final String token,
                                        @Nonnull final Integer id);
+
+    ResponseEntity<?> reportInitiative(@Nonnull final String token,
+                                       @Nonnull final Integer id);
 }

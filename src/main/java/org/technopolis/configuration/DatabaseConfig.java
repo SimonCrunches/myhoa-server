@@ -4,11 +4,11 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.jdbc.datasource.SimpleDriverDataSource;
 
 import javax.sql.DataSource;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
@@ -17,7 +17,7 @@ public class DatabaseConfig {
 
     @Bean
     @Profile("local")
-    public DataSource dataSource() {
+    public DataSource localDataSource() {
         return DataSourceBuilder.create()
                 .driverClassName("org.postgresql.Driver")
                 .url("jdbc:postgresql://localhost:5432/postgres")
@@ -28,7 +28,7 @@ public class DatabaseConfig {
 
     @Bean
     @Profile("heroku")
-    public Connection getConnection() throws URISyntaxException, SQLException {
+    public DataSource herokuDataSource() throws URISyntaxException, SQLException {
         final URI dbUri = new URI(System.getenv("DATABASE_URL"));
 
         final String username = dbUri.getUserInfo().split(":")[0];
@@ -37,7 +37,7 @@ public class DatabaseConfig {
                 + dbUri.getPort() + dbUri.getPath()
                 + "?sslmode=require";
 
-        return DriverManager.getConnection(dbUrl, username, password);
+        return new SimpleDriverDataSource(DriverManager.getDriver(dbUrl), dbUrl, username, password);
     }
 
 }

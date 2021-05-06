@@ -16,9 +16,10 @@ public class OwnerFavouriteInitiativeDTO extends InitiativeDTO {
     private Boolean isFavourite;
 
     public OwnerFavouriteInitiativeDTO(@Nonnull final Initiative initiative,
+                                       @Nonnull final Integer currentFunds,
                                        @Nonnull final Boolean isMine,
                                        @Nonnull final Boolean isFavourite) {
-        super(initiative);
+        super(initiative, currentFunds);
         this.isMine = isMine;
         this.isFavourite = isFavourite;
     }

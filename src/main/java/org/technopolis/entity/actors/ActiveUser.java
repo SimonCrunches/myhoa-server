@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.technopolis.entity.logic.FavouriteInitiative;
 import org.technopolis.entity.logic.Initiative;
+import org.technopolis.entity.logic.Payment;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -59,6 +60,10 @@ public class ActiveUser implements UserDetails {
     @JsonBackReference
     @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<FavouriteInitiative> favouriteInitiatives = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "activeUser", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<Payment> payments = new HashSet<>();
 
     @Override
     public Set<Role> getAuthorities() {

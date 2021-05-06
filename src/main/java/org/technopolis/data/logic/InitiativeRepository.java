@@ -17,4 +17,9 @@ public interface InitiativeRepository extends BaseRepository<Initiative> {
 
     Optional<Initiative> findByActiveUserAndTitle(@Nonnull final ActiveUser activeUser,
                                                   @Nonnull final String title);
+
+    List<Initiative> findByTrash(@Nonnull final Boolean isTrash);
+
+    List<Initiative> findByActiveUserAndTrash(@Nonnull final ActiveUser activeUser,
+                                             @Nonnull final Boolean isTrash);
 }

@@ -14,4 +14,6 @@ public interface ActiveUserRepository extends BaseRepository<ActiveUser> {
 
     Optional<ActiveUser> findByFirebaseToken(@Nonnull final String firebaseToken);
 
+    Boolean existsByFirebaseToken(@Nonnull final String firebaseToken);
+
 }

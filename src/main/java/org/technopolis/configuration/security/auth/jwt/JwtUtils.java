@@ -8,6 +8,8 @@ import org.technopolis.configuration.security.SecurityConstants;
 
 import javax.annotation.Nonnull;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 @Component
@@ -15,8 +17,10 @@ import java.util.Date;
 public class JwtUtils {
 
     public String generateJwtToken(@Nonnull final String token) {
-        return Jwts.builder().setSubject((token)).setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + SecurityConstants.EXPIRATION_TIME))
+        return Jwts.builder()
+                .setSubject((token))
+                .setExpiration(Date.from(LocalDate.now().plusDays(SecurityConstants.EXPIRATION_TIME)
+                        .atStartOfDay(ZoneId.systemDefault()).toInstant()))
                 .signWith(SignatureAlgorithm.HS512, SecurityConstants.SECRET)
                 .compact();
     }

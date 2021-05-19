@@ -3,7 +3,6 @@ package org.technopolis.configuration.security.auth.firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.google.firebase.auth.UserRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -12,7 +11,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component

@@ -8,16 +8,20 @@ import org.springframework.transaction.annotation.Transactional;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
 import org.technopolis.controller.facade.ActiveUserFacade;
 import org.technopolis.data.actor.ActiveUserRepository;
+import org.technopolis.data.logic.BlogRepository;
 import org.technopolis.data.logic.FavouriteInitiativeRepository;
 import org.technopolis.data.logic.InitiativeRepository;
 import org.technopolis.data.logic.PaymentRepository;
+import org.technopolis.dto.entities.BlogDTO;
 import org.technopolis.dto.entities.OwnerFavouriteInitiativeDTO;
+import org.technopolis.dto.logic.EditBlogDTO;
 import org.technopolis.dto.logic.EditInitiativeDTO;
 import org.technopolis.dto.logic.EditUserDTO;
 import org.technopolis.dto.entities.ActiveUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
 import org.technopolis.entity.actors.ActiveUser;
 import org.technopolis.entity.enums.Category;
+import org.technopolis.entity.logic.Blog;
 import org.technopolis.entity.logic.FavouriteInitiative;
 import org.technopolis.entity.logic.Initiative;
 import org.technopolis.response.MessageResponse;
@@ -38,6 +42,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     private final InitiativeRepository initiativeRepository;
     private final PaymentRepository paymentRepository;
     private final FavouriteInitiativeRepository favouriteInitiativeRepository;
+    private final BlogRepository blogRepository;
     private final JwtUtils jwtUtils;
 
     @Autowired
@@ -45,11 +50,13 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                                 @Nonnull final InitiativeRepository initiativeRepository,
                                 @Nonnull final PaymentRepository paymentRepository,
                                 @Nonnull final FavouriteInitiativeRepository favouriteInitiativeRepository,
+                                @Nonnull final BlogRepository blogRepository,
                                 @Nonnull final JwtUtils jwtUtils) {
         this.activeUserRepository = activeUserRepository;
         this.initiativeRepository = initiativeRepository;
         this.paymentRepository = paymentRepository;
         this.favouriteInitiativeRepository = favouriteInitiativeRepository;
+        this.blogRepository = blogRepository;
         this.jwtUtils = jwtUtils;
     }
 
@@ -76,7 +83,10 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
                 .price(model.getPrice())
                 .contractor(model.getContractor())
                 .trash(false)
-                .imageUrl(model.getImageUrl()).build();
+                .imageUrl(model.getImageUrl())
+                .documentUrl(model.getDocumentUrl())
+                .wallet(model.getWallet())
+                .fundingUrl(model.getFundingUrl()).build();
         initiativeRepository.save(initiative);
         final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(user, model.getTitle()).orElse(null);
         if (addedInitiative == null) {
@@ -118,9 +128,18 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (model.getImageUrl() != null) {
             initiative.setImageUrl(model.getImageUrl());
         }
+        if (model.getDocumentUrl() != null) {
+            initiative.setDocumentUrl(model.getDocumentUrl());
+        }
+        if (model.getWallet() != null) {
+            initiative.setWallet(model.getWallet());
+        }
+        if (model.getFundingUrl() != null) {
+            initiative.setFundingUrl(model.getFundingUrl());
+        }
         initiativeRepository.save(initiative);
-        final Initiative addedInitiative = initiativeRepository.findByActiveUserAndTitle(user, model.getTitle()).orElse(null);
-        if (addedInitiative == null) {
+        final Initiative editedInitiative = initiativeRepository.findByActiveUserAndTitle(user, model.getTitle()).orElse(null);
+        if (editedInitiative == null) {
             return new ResponseEntity<>("Error when editing initiative", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(new MessageResponse("Initiative successfully edited!"));
@@ -133,11 +152,11 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
         final List<OwnerFavouriteInitiativeDTO> initiatives = new ArrayList<>();
-        for (final Initiative initiative : initiativeRepository.findByActiveUserAndTrash(user, false)) {
+        for (final Initiative initiative : initiativeRepository.findByTrash(false)) {
             initiatives.add(new OwnerFavouriteInitiativeDTO(initiative,
                     paymentRepository.findSumPaymentsByInitiative(initiative.getId()).orElse(0),
-                    true,
-                    false));
+                    initiativeRepository.existsByActiveUserAndTitle(user, initiative.getTitle()),
+                    favouriteInitiativeRepository.existsByActiveUserAndInitiative(user, initiative)));
         }
         return ResponseEntity.ok(initiatives);
     }
@@ -161,9 +180,12 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (model.getEmail() != null) {
             user.setEmail(model.getEmail());
         }
+        if (model.getPictureUrl() != null) {
+            user.setPictureUrl(model.getPictureUrl());
+        }
         activeUserRepository.save(user);
-        final ActiveUser addedActiveUser = activeUserRepository.findByUsername(user.getUsername()).orElse(null);
-        if (addedActiveUser == null) {
+        final ActiveUser editedActiveUser = activeUserRepository.findByUsername(user.getUsername()).orElse(null);
+        if (editedActiveUser == null) {
             return new ResponseEntity<>("Error when editing user", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(new MessageResponse("User successfully edited!"));
@@ -272,5 +294,79 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
             return new ResponseEntity<>("Error when trashing initiative", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(new MessageResponse("Initiative successfully added to trash!"));
+    }
+
+    @Override
+    public ResponseEntity<?> addBlog(@Nonnull final String token,
+                                     @Nonnull final BlogDTO model,
+                                     @Nonnull final Integer id) {
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final Initiative initiative = initiativeRepository.findById(id).orElse(null);
+        if (initiative == null) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final Blog blog = Blog.builder()
+                .title(model.getTitle())
+                .description(model.getDescription())
+                .creationDate(LocalDateTime.parse(LocalDateTime.now().format(CommonUtils.LOCALDATETIME), CommonUtils.LOCALDATETIME))
+                .initiative(initiative)
+                .imageUrl(model.getImageUrl())
+                .build();
+        blogRepository.save(blog);
+        final Blog addedBlog = blogRepository.findByInitiativeAndTitle(initiative, model.getTitle()).orElse(null);
+        if (addedBlog == null) {
+            return new ResponseEntity<>("Error when adding new blog", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Blog successfully added!"));
+    }
+
+    @Override
+    public ResponseEntity<?> editBlog(@Nonnull final String token,
+                                      @Nonnull final EditBlogDTO model,
+                                      @Nonnull final Integer id) {
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
+        if (user == null) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final Blog blog = blogRepository.findById(id).orElse(null);
+        if (blog == null) {
+            return new ResponseEntity<>("Blog doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        if (model.getTitle() != null) {
+            blog.setTitle(model.getTitle());
+        }
+        if (model.getDescription() != null) {
+            blog.setDescription(model.getDescription());
+        }
+        if (model.getImageUrl() != null) {
+            blog.setImageUrl(model.getImageUrl());
+        }
+        blogRepository.save(blog);
+        final Blog editedBlog = blogRepository.findById(id).orElse(null);
+        if (editedBlog == null) {
+            return new ResponseEntity<>("Error when editing blog", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Blog successfully edited!"));
+    }
+
+    @Override
+    public ResponseEntity<?> deleteBlog(@Nonnull final String token,
+                                        @Nonnull final Integer id) {
+        if (!activeUserRepository.existsByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token))) {
+            return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        final Blog blog = blogRepository.findById(id).orElse(null);
+        if (blog == null) {
+            return new ResponseEntity<>("Blog doesnt exist", HttpStatus.NOT_FOUND);
+        }
+        blogRepository.deleteById(blog.getId());
+        final Blog deletedBlog = blogRepository.findById(id).orElse(null);
+        if (deletedBlog != null) {
+            return new ResponseEntity<>("Error when deleting Blog", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Blog successfully deleted!"));
     }
 }

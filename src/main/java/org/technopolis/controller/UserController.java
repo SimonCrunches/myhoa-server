@@ -53,4 +53,10 @@ public class UserController {
     public ResponseEntity<Object> getUser(@PathVariable final Integer id) {
         return userFacade.getUser(id);
     }
+
+    @GetMapping("/blog/{id}")
+    public ResponseEntity<Object> getBlogs(@PathVariable final Integer id) {
+        return userFacade.getBlogs(id);
+    }
+
 }

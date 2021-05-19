@@ -28,4 +28,13 @@ public class EditInitiativeDTO {
 
     @JsonProperty("imageUrl")
     private String imageUrl;
+
+    @JsonProperty("documentUrl")
+    private String documentUrl;
+
+    @JsonProperty("wallet")
+    private String wallet;
+
+    @JsonProperty("fundingUrl")
+    private String fundingUrl;
 }

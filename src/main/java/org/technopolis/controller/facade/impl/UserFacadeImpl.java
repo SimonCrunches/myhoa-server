@@ -10,12 +10,15 @@ import org.technopolis.configuration.security.auth.firebase.FirebaseTokenHolder;
 import org.technopolis.configuration.security.auth.jwt.JwtUtils;
 import org.technopolis.controller.facade.UserFacade;
 import org.technopolis.data.actor.ActiveUserRepository;
+import org.technopolis.data.logic.BlogRepository;
 import org.technopolis.data.logic.InitiativeRepository;
 import org.technopolis.data.logic.PaymentRepository;
 import org.technopolis.dto.entities.ActiveUserDTO;
+import org.technopolis.dto.entities.BlogDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
 import org.technopolis.dto.logic.PaymentDTO;
 import org.technopolis.entity.actors.ActiveUser;
+import org.technopolis.entity.logic.Blog;
 import org.technopolis.entity.logic.Initiative;
 import org.technopolis.entity.logic.Payment;
 import org.technopolis.response.FirebaseResponse;
@@ -38,6 +41,7 @@ public class UserFacadeImpl implements UserFacade {
     private final ActiveUserRepository activeUserRepository;
     private final InitiativeRepository initiativeRepository;
     private final PaymentRepository paymentRepository;
+    private final BlogRepository blogRepository;
 
     @Autowired
     public UserFacadeImpl(@Nonnull final FirebaseService firebaseService,
@@ -45,13 +49,15 @@ public class UserFacadeImpl implements UserFacade {
                           @Nonnull final JwtUtils jwtUtils,
                           @Nonnull final ActiveUserRepository activeUserRepository,
                           @Nonnull final InitiativeRepository initiativeRepository,
-                          @Nonnull final PaymentRepository paymentRepository) {
+                          @Nonnull final PaymentRepository paymentRepository,
+                          @Nonnull final BlogRepository blogRepository) {
         this.firebaseService = firebaseService;
         this.userService = userService;
         this.jwtUtils = jwtUtils;
         this.activeUserRepository = activeUserRepository;
         this.initiativeRepository = initiativeRepository;
         this.paymentRepository = paymentRepository;
+        this.blogRepository = blogRepository;
     }
 
     @Override
@@ -108,6 +114,18 @@ public class UserFacadeImpl implements UserFacade {
         final ActiveUser user = userService.getUser(id);
         return user == null ? new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND)
                 : ResponseEntity.ok(new ActiveUserDTO(user));
+    }
+
+    @Override
+    public ResponseEntity<Object> getBlogs(@Nonnull final Integer id) {
+        if (!initiativeRepository.existsById(id)) {
+            return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.FOUND);
+        }
+        final List<BlogDTO> blogs = new ArrayList<>();
+        for (final Blog blog : blogRepository.findByInitiative(initiativeRepository.findById(id).get())) {
+            blogs.add(new BlogDTO(blog));
+        }
+        return ResponseEntity.ok(blogs);
     }
 
 }

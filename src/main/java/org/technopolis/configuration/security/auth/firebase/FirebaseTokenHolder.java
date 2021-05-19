@@ -1,11 +1,9 @@
 package org.technopolis.configuration.security.auth.firebase;
 
-import com.google.api.client.util.ArrayMap;
 import com.google.firebase.auth.FirebaseToken;
 import lombok.Data;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.Map;
 
 @Data
@@ -42,10 +40,5 @@ public class FirebaseTokenHolder {
     public String getPicture() {
         return token.getPicture();
     }
-
-    /*public String getGoogleId() {
-        return ((ArrayList<String>) ((ArrayMap) ((ArrayMap) token.getClaims().get("firebase"))
-                .get("identities")).get("google.com")).get(0);
-    }*/
 
 }

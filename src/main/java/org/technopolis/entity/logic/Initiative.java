@@ -70,6 +70,15 @@ public class Initiative implements Serializable {
     @Column(name = "imageUrl")
     private String imageUrl;
 
+    @Column(name = "documentUrl")
+    private String documentUrl;
+
+    @Column(name = "wallet")
+    private String wallet;
+
+    @Column(name = "fundingUrl")
+    private String fundingUrl;
+
     @JsonBackReference
     @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     protected Set<Task> tasks = new HashSet<>();
@@ -81,6 +90,10 @@ public class Initiative implements Serializable {
     @JsonBackReference
     @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     protected Set<Payment> payments = new HashSet<>();
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "initiative", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    protected Set<Blog> blogs = new HashSet<>();
 
     public void incrementReports() {
         this.reports++;

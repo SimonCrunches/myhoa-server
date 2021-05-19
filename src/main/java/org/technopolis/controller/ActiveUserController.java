@@ -6,6 +6,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.technopolis.configuration.security.SecurityConstants;
 import org.technopolis.controller.facade.ActiveUserFacade;
+import org.technopolis.dto.entities.BlogDTO;
+import org.technopolis.dto.logic.EditBlogDTO;
 import org.technopolis.dto.logic.EditInitiativeDTO;
 import org.technopolis.dto.logic.EditUserDTO;
 import org.technopolis.dto.entities.InitiativeDTO;
@@ -72,5 +74,25 @@ public class ActiveUserController {
     public ResponseEntity<?> reportInitiative(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
                                               @PathVariable final Integer id) {
         return facade.reportInitiative(token.substring(7), id);
+    }
+
+    @PostMapping(value = "/blog/{id}")
+    public ResponseEntity<?> addBlog(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                     @Valid @RequestBody final BlogDTO model,
+                                     @PathVariable final Integer id) {
+        return facade.addBlog(token.substring(7), model, id);
+    }
+
+    @PutMapping(value = "/blog/{id}")
+    public ResponseEntity<?> editBlog(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                      @Valid @RequestBody final EditBlogDTO model,
+                                      @PathVariable final Integer id) {
+        return facade.editBlog(token.substring(7), model, id);
+    }
+
+    @DeleteMapping(value = "/blog/{id}")
+    public ResponseEntity<?> deleteBlog(@RequestHeader(value = SecurityConstants.HEADER_STRING) String token,
+                                        @PathVariable final Integer id) {
+        return facade.deleteBlog(token.substring(7), id);
     }
 }

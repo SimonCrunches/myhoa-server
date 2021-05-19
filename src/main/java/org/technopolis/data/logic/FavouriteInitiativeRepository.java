@@ -13,6 +13,9 @@ import java.util.Optional;
 @Repository
 public interface FavouriteInitiativeRepository extends BaseRepository<FavouriteInitiative> {
 
+    Boolean existsByActiveUserAndInitiative(@Nonnull final ActiveUser activeUser,
+                                             @Nonnull final Initiative initiative);
+
     List<FavouriteInitiative> findByActiveUser(@Nonnull final ActiveUser activeUser);
 
     List<FavouriteInitiative> findByInitiative(@Nonnull final Initiative initiative);

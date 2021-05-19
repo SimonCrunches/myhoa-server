@@ -2,7 +2,6 @@ package org.technopolis.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -19,7 +18,6 @@ import org.technopolis.service.UserService;
 import org.technopolis.service.shared.RegisterUserInit;
 
 import javax.annotation.Nonnull;
-import javax.annotation.PostConstruct;
 import java.util.*;
 
 @Service
@@ -64,9 +62,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Secured(value = SecurityConfig.Roles.ROLE_ACTIVE_USER)
     public ActiveUser registerUser(@Nonnull final RegisterUserInit init) {
-
         final ActiveUser userLoaded = userDao.findByUsername(init.getUserName()).orElse(null);
 
         if (userLoaded == null) {
@@ -91,15 +87,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public ActiveUser getUser(@Nonnull final Integer id) {
         return userDao.findById(id).orElse(null);
-    }
-
-
-    @PostConstruct
-    public void init() {
-    }
-
-    private Set<Role> getExpertRoles() {
-        return Collections.singleton(getRole(SecurityConfig.Roles.ROLE_EXPERT));
     }
 
     private Set<Role> getActiveUserRoles() {

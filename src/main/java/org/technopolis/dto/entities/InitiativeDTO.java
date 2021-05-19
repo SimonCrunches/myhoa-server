@@ -54,6 +54,15 @@ public class InitiativeDTO {
     @JsonProperty("reports")
     protected Integer reports;
 
+    @JsonProperty("documentUrl")
+    private String documentUrl;
+
+    @JsonProperty("wallet")
+    private String wallet;
+
+    @JsonProperty("fundingUrl")
+    private String fundingUrl;
+
     public InitiativeDTO(@Nonnull final Initiative initiative,
                          @Nonnull final Integer currentFunds) {
         this.id = initiative.getId();
@@ -70,6 +79,9 @@ public class InitiativeDTO {
         this.creationDate = initiative.getCreationDate().format(CommonUtils.LOCALDATETIME);
         this.currentFunds = currentFunds;
         this.reports = initiative.getReports();
+        this.documentUrl = initiative.getDocumentUrl();
+        this.wallet = initiative.getWallet();
+        this.fundingUrl = initiative.getFundingUrl();
     }
 
 }

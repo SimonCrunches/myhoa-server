@@ -19,4 +19,7 @@ public class EditUserDTO {
 
     @JsonProperty(value = "email")
     private String email;
+
+    @JsonProperty("pictureUrl")
+    private String pictureUrl;
 }

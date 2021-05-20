@@ -259,19 +259,24 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
     @Override
     public ResponseEntity<?> deleteFavourites(@Nonnull final String token,
                                               @Nonnull final Integer id) {
-        if (!activeUserRepository.existsByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token))) {
+        final ActiveUser user = activeUserRepository.findByFirebaseToken(jwtUtils.getFirebaseTokenFromJwtToken(token)).orElse(null);
+        if (user == null) {
             return new ResponseEntity<>("User doesnt exist", HttpStatus.NOT_FOUND);
         }
-        final FavouriteInitiative favInit = favouriteInitiativeRepository.findById(id).orElse(null);
-        if (favInit == null) {
+        final Initiative initiative = initiativeRepository.findById(id).orElse(null);
+        if (initiative == null) {
             return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
         }
-        favouriteInitiativeRepository.deleteByActiveUserAndInitiative(favInit.getActiveUser(), favInit.getInitiative());
-        final FavouriteInitiative deletedFavInit = favouriteInitiativeRepository.findById(id).orElse(null);
-        if (deletedFavInit != null) {
-            return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);
+        final FavouriteInitiative favInit = favouriteInitiativeRepository.findByActiveUserAndInitiative(user, initiative).orElse(null);
+        if (favInit == null) {
+            return new ResponseEntity<>("Favourite initiative doesnt exist", HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(new MessageResponse("Initiative successfully deleted!"));
+        favouriteInitiativeRepository.deleteByActiveUserAndInitiative(favInit.getActiveUser(), favInit.getInitiative());
+        final FavouriteInitiative deletedFavInit = favouriteInitiativeRepository.findByActiveUserAndInitiative(user, initiative).orElse(null);
+        if (deletedFavInit != null) {
+            return new ResponseEntity<>("Error when deleting favourite initiative", HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(new MessageResponse("Favourite initiative successfully deleted!"));
     }
 
     @Override

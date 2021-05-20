@@ -22,4 +22,7 @@ public interface FavouriteInitiativeRepository extends BaseRepository<FavouriteI
 
     Optional<FavouriteInitiative> findByActiveUserAndInitiative(@Nonnull final ActiveUser activeUser,
                                                                 @Nonnull final Initiative initiative);
+
+    void deleteByActiveUserAndInitiative(@Nonnull final ActiveUser activeUser,
+                                         @Nonnull final Initiative initiative);
 }

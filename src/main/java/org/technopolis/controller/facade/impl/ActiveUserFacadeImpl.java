@@ -266,7 +266,7 @@ public class ActiveUserFacadeImpl implements ActiveUserFacade {
         if (favInit == null) {
             return new ResponseEntity<>("Initiative doesnt exist", HttpStatus.NOT_FOUND);
         }
-        favouriteInitiativeRepository.deleteById(favInit.getId());
+        favouriteInitiativeRepository.deleteByActiveUserAndInitiative(favInit.getActiveUser(), favInit.getInitiative());
         final FavouriteInitiative deletedFavInit = favouriteInitiativeRepository.findById(id).orElse(null);
         if (deletedFavInit != null) {
             return new ResponseEntity<>("Error when deleting initiative", HttpStatus.BAD_REQUEST);
